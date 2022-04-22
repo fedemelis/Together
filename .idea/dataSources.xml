@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="Oracle Cloud 19.14" uuid="e188f893-f263-4a6b-a2eb-bf87d0b1a37d">
+      <driver-ref>df6927f9-ce58-4cd3-9b46-1af7b94aa195</driver-ref>
+      <synchronize>true</synchronize>
+      <auto-commit>false</auto-commit>
+      <jdbc-driver>oracle.jdbc.OracleDriver</jdbc-driver>
+      <jdbc-url>jdbc:oracle:oci8:@db</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="TNSADMIN_DIR" value="$USER_HOME$/OneDrive/Desktop/instantClient19.14/instantclient_19_14" />
+      </jdbc-additional-properties>
+      <working-dir>$ProjectFileDir$</working-dir>
+      <vm-env>
+        <property name="ORACLE_HOME" value="&quot;C:\Users\fedem\OneDrive\Desktop\instantClient19.14\instantclient_19_14&quot;" />
+      </vm-env>
+    </data-source>
+  </component>
+</project>
