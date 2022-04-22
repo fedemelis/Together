@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal" created-in="IU-213.7172.25">
-    <data-source name="Oracle Cloud 19.14" uuid="e188f893-f263-4a6b-a2eb-bf87d0b1a37d">
+    <data-source name="Oracle Cloud" uuid="1fd64b2c-1331-416d-8142-c1ee28c7d04c">
       <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="ORACLE" exact-version="0" />
       <secret-storage>master_key</secret-storage>
-      <user-name>ADMIN</user-name>
+      <user-name>fedemelis1</user-name>
       <schema-mapping />
       <introspection-level>3</introspection-level>
-      <ssl-config>
-        <enabled>true</enabled>
-        <mode>REQUIRE</mode>
-      </ssl-config>
     </data-source>
   </component>
 </project>
