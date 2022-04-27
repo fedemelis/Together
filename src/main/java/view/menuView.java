@@ -13,6 +13,7 @@ public class menuView extends JFrame{
         });
 
         setContentPane(panel);
+        setSize(500, 500);
         setVisible(true);
     }
 
