@@ -9,7 +9,7 @@ public class menuView extends JFrame{
     public menuView() {
         super("testo di esempio");
         btnShow.addActionListener(e -> {
-            System.out.println("Ciao");
+            System.out.println("Raiola merda");
         });
 
         setContentPane(panel);
