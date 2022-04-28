@@ -2,14 +2,14 @@ package view;
 
 import javax.swing.*;
 
-public class menuView extends JFrame{
+public class CreateAccountView extends JFrame{
     private JButton btnShow;
     private JPanel panel;
 
-    public menuView() {
+    public CreateAccountView() {
         super("testo di esempio");
         btnShow.addActionListener(e -> {
-            System.out.println("Raiola merda");
+            System.out.println("Prova");
         });
 
         setContentPane(panel);
@@ -18,6 +18,6 @@ public class menuView extends JFrame{
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(menuView::new);
+        SwingUtilities.invokeLater(CreateAccountView::new);
     }
 }
