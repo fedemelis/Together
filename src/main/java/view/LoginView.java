@@ -1,35 +1,40 @@
 package view;
 
-import controller.LoginController;
-import model.LoginViewModel;
+import base.User;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.TextAttribute;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class LoginView extends JFrame{
-    private JButton btnLogin;
-    private JPanel loginViewPanel;
-    private JPanel centrePanel;
+    private JPanel mainPanel;
+    private JPanel loginPanel;
     private JTextField tbUser;
     private JPasswordField tbPassword;
-    private JButton button1;
     private JButton btnEntra;
     private JLabel creaacc;
     private JLabel errorLabel;
-    private LoginController loginController;
+    private ArrayList<User> userList;
 
     public LoginView() {
         super("Together");
-        setContentPane(loginViewPanel);
+        setContentPane(mainPanel);
         setSize(500, 500);
         setVisible(true);
 
-        makeHighlighted_HandCursor(creaacc);
+        ////////////////////////////
+        userList = new ArrayList<User>();
+        userList.add(new User("Federico", "pass"));
+        userList.add(new User("Fede", "pass"));
+        userList.add(new User("Luca", "pass"));
+        userList.add(new User("Melis", "pass"));
+        userList.add(new User("D'Amato", "pass"));
+        ////////////////////////////
 
-        loginController = new LoginController();
+        makeHighlighted_HandCursor(creaacc);
 
         creaacc.addMouseListener(new MouseAdapter() {
             @Override
@@ -44,10 +49,11 @@ public class LoginView extends JFrame{
         btnEntra.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String risposta = loginController.TryLogin(tbUser.getText(), tbPassword.getPassword());
+                String risposta = TryLogin(tbUser.getText(), tbPassword.getPassword());
                 if (risposta == "Successo"){
                     setVisible(false);
-                    SwingUtilities.invokeLater(CalendarLoginView::new);
+                    CreateAccountView.getFrames();
+                    //SwingUtilities.invokeLater(CalendarLoginView::new);
                 }
                 else{
                     errorLabel.setText(risposta);
@@ -63,6 +69,17 @@ public class LoginView extends JFrame{
         Map attributes = font.getAttributes();
         attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         label.setFont(font.deriveFont(attributes));
+    }
+
+    public String TryLogin(String user, char[] pass){
+        if (!user.isEmpty() && (pass.length > 0)){
+            User tmp = new User(user, String.valueOf(pass));
+            if (userList.contains(tmp)){
+                return "Successo";
+            }
+            return "Username o password errati";
+        }
+        return "Compila tutti i campi";
     }
 
     public static void main(String[] args) {
