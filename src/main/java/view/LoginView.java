@@ -18,6 +18,7 @@ public class LoginView extends JFrame{
     private JButton button1;
     private JButton btnEntra;
     private JLabel creaacc;
+    private JLabel errorLabel;
     private LoginController loginController;
 
     public LoginView() {
@@ -43,12 +44,14 @@ public class LoginView extends JFrame{
         btnEntra.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(loginController.TryLogin(tbUser.getText(), tbPassword.getPassword())){
+                String risposta = loginController.TryLogin(tbUser.getText(), tbPassword.getPassword());
+                if (risposta == "Successo"){
                     setVisible(false);
                     SwingUtilities.invokeLater(CalendarLoginView::new);
                 }
                 else{
-                    System.out.println("Errore");
+                    errorLabel.setText(risposta);
+                    errorLabel.setForeground(Color.red);
                 }
             }
         });

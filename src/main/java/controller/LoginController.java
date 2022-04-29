@@ -7,16 +7,28 @@ import java.util.List;
 
 public class LoginController {
 
-    public LoginController(){
+    private List<User> userList;
 
+    public LoginController(){
+        //TODO: popolare la lista
+        //TODO: selectAllUser
+        userList = new ArrayList<User>();
+        userList.add(new User("Federico", "pass"));
+        userList.add(new User("Fede", "pass"));
+        userList.add(new User("Luca", "pass"));
+        userList.add(new User("Melis", "pass"));
+        userList.add(new User("D'Amato", "pass"));
     }
 
-    public boolean TryLogin(String user, char[] pass){
+    public String TryLogin(String user, char[] pass){
         if (!user.isEmpty() && (pass.length > 0)){
-            //TODO: controllare se l'utente corrisponde ad una password nel db
-            return true;
+            User tmp = new User(user, String.valueOf(pass));
+            if (userList.contains(tmp)){
+                return "Successo";
+            }
+            return "Username o password errati";
         }
-        return false;
+        return "Compila tutti i campi";
     }
 
 }
