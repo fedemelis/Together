@@ -17,13 +17,24 @@ public class LoginView extends JFrame{
     private JButton btnEntra;
     private JLabel creaacc;
     private JLabel errorLabel;
+    private JTextField tbUsername;
+    private JTextField tbEmail;
+    private JPasswordField tbConfirmPasword;
+    private JButton btnCrea;
+    private JTextField tbNome;
+    private JTextField tbCognome;
+    private JLabel labelNome;
+    private JLabel labelCognome;
+    private JPanel createNewAccountPanel;
     private ArrayList<User> userList;
 
     public LoginView() {
+
         super("Together");
         setContentPane(mainPanel);
         setSize(500, 500);
         setVisible(true);
+        makeHighlighted_HandCursor(creaacc);
 
         ////////////////////////////
         userList = new ArrayList<User>();
@@ -34,14 +45,18 @@ public class LoginView extends JFrame{
         userList.add(new User("D'Amato", "pass"));
         ////////////////////////////
 
-        makeHighlighted_HandCursor(creaacc);
-
         creaacc.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                setVisible(false);
-                SwingUtilities.invokeLater(CreateAccountView::new);
+                mainPanel.removeAll();
+                mainPanel.add(createNewAccountPanel);
+                mainPanel.repaint();
+                mainPanel.revalidate();
+                setPlaceHolder(tbUsername, "Username");
+                setPlaceHolder(tbEmail, "E-mail");
+                setPlaceHolder(tbNome, "Nome");
+                setPlaceHolder(tbCognome, "Cognome");
             }
         });
 
@@ -51,9 +66,10 @@ public class LoginView extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 String risposta = TryLogin(tbUser.getText(), tbPassword.getPassword());
                 if (risposta == "Successo"){
-                    setVisible(false);
-                    CreateAccountView.getFrames();
-                    //SwingUtilities.invokeLater(CalendarLoginView::new);
+                    mainPanel.removeAll();
+                    //mainPanel.add(//TODO: aggiungere il pannello per per il login al calendario);
+                    mainPanel.repaint();
+                    mainPanel.revalidate();
                 }
                 else{
                     errorLabel.setText(risposta);
@@ -62,6 +78,11 @@ public class LoginView extends JFrame{
             }
         });
     }
+
+    /*
+    Methods
+     */
+
 
     public void makeHighlighted_HandCursor(JLabel label){
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -80,6 +101,26 @@ public class LoginView extends JFrame{
             return "Username o password errati";
         }
         return "Compila tutti i campi";
+    }
+
+    public void setPlaceHolder(JTextField tb, String s){
+        tb.setForeground(Color.GRAY);
+        tb.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (tb.getText().equals(s)) {
+                    tb.setText("");
+                    tb.setForeground(Color.BLACK);
+                }
+            }
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (tb.getText().isEmpty()) {
+                    tb.setForeground(Color.GRAY);
+                    tb.setText(s);
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {

@@ -1,23 +1,19 @@
 package base;
 
+import lombok.*;
+
 import java.util.Date;
 
+@Data
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class Eventi {
-    String nome;
-    String creator;
-    String category;
+    @NonNull String nome;
+    @NonNull String creator;
+    @NonNull String category;
     String desc;
-    Date date;
-
-    public Eventi(String nome, String creator, String category, String desc, Date date) {
-        this.nome = nome;
-        this.creator = creator;
-        this.category = category;
-        this.desc = desc;
-        this.date = date;
-    }
-
-    public String getNome() {
+    @NonNull Date date;
+    /*public String getNome() {
         return nome;
     }
 
@@ -55,5 +51,5 @@ public class Eventi {
 
     public void setDate(Date date) {
         this.date = date;
-    }
+    }*/
 }
