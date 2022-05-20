@@ -1,11 +1,17 @@
 package base;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.*;
+
+import javax.annotation.processing.Generated;
 import java.util.Objects;
 
 public class User {
 
-    String username;
-    String password;
+    @Getter @Setter String username;
+    @Getter @Setter String password;
+
 
     public User(){
         username = "User";
@@ -45,6 +51,7 @@ public class User {
         return Objects.hash(username, password);
     }
 
+    /*
     public String getUsername() {
         return username;
     }
@@ -60,4 +67,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+     */
 }
