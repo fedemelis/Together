@@ -1,4 +1,5 @@
 import base.Eventi;
+import base.Meeting;
 import base.User;
 
 import java.text.DateFormat;
@@ -9,7 +10,7 @@ public class test {
 
     public static void main(String[] args) {
         Date d = new Date();
-        Eventi e = new Eventi("ev", "Me", "yup", "yo", d);
-        System.out.println(e);
+        Meeting m = new Meeting("pé", "P", "P", "P", "d");
+        //System.out.println(e);
     }
 }
