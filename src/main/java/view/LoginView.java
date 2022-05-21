@@ -31,6 +31,7 @@ public class LoginView extends JFrame{
     private JPasswordField tbNewAccountPassword;
     private ArrayList<User> userList;
 
+    @SneakyThrows
     public LoginView()  {
 
         super("Together");
@@ -40,6 +41,7 @@ public class LoginView extends JFrame{
         makeHighlighted_HandCursor(creaacc);
 
         int i = 0;
+        UserDB userManager = new UserDB();
         ////////////////////////////
         //old list
         ////////////////////////////
@@ -80,11 +82,9 @@ public class LoginView extends JFrame{
             @SneakyThrows
             @Override
             public void actionPerformed(ActionEvent e) {
-                    String query = String.format("INSERT INTO user (username, password, nome, cognome, mail) VALUES('%s', '%s', '%s', '%s', '%s')",
-                            tbUsername.getText(), tbConfirmPasword.getPassword(), tbNome.getText(), tbCognome.getText(), tbEmail.getText());
-                    System.out.println(query);
-                    UserDB userManager = new UserDB();
-                    userManager.insertUser(query);
+                    System.out.println(userManager.selectUserByUsername("fede"));
+                    //System.out.println(query);
+                    //userManager.insertUser(tbUsername.getText(), tbConfirmPasword.getPassword(), tbNome.getText(), tbCognome.getText(), tbEmail.getText());
             }
         });
     }

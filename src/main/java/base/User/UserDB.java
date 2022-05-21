@@ -8,9 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class UserDB implements UserDAO<User> {
+public class UserDB implements UserDAO {
 
-    static Statement statement;
+    Statement statement;
 
     public void MySQLConnection() throws SQLException {
         DBManager.setConnection(
@@ -26,8 +26,16 @@ public class UserDB implements UserDAO<User> {
     }
 
     @Override
-    public User selectUserByUsername(String username) {
-        return null;
+    public User selectUserByUsername(String username) throws SQLException{
+        String query = String.format("SELECT * FROM user WHERE username = '%s'", username);
+        ResultSet rs = statement.executeQuery(query);
+        return rsToUser(rs);
+    }
+
+    @Override
+    public ResultSet selectAllUser() throws SQLException {
+        ResultSet rs = statement.executeQuery("SELECT * FROM user");
+        return rs;
     }
 
     @Override
@@ -46,9 +54,21 @@ public class UserDB implements UserDAO<User> {
     }
 
     @Override
-    public void insertUser(String query) throws SQLException{
+    public void insertUser(String username, char[] password, String nome, String cognome, String mail) throws SQLException {
+        String query = String.format("INSERT INTO user (username, password, nome, cognome, mail) VALUES('%s', '%s', '%s', '%s', '%s')",
+               username, password, nome, cognome, mail);
         statement.executeUpdate(query);
     }
 
+    public User rsToUser(ResultSet rs) throws SQLException {
+        rs.next();
+        User u = new User(
+                rs.getString(1),
+                rs.getString(2),
+                rs.getString(3),
+                rs.getString(4),
+                rs.getString(5));
+        return u;
 
+    }
 }

@@ -1,11 +1,15 @@
 package base.User;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
-interface UserDAO<User> {
+interface UserDAO {
 
     //return user by username
-    User selectUserByUsername(String username);
+    User selectUserByUsername(String username) throws SQLException;
+
+    //return all user
+    ResultSet selectAllUser() throws SQLException;
 
     //change username by username
     void updateUsernameByUsername(String oldUsername, String newUsername);
@@ -17,7 +21,7 @@ interface UserDAO<User> {
     void deleteUserByUsername(String username);
 
     //insert new user
-    void insertUser(String query) throws SQLException;
+    void insertUser(String username, char[] password, String nome, String cognome, String mail) throws SQLException;
 
 
 
