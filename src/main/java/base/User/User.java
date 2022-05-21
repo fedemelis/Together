@@ -1,4 +1,4 @@
-package base;
+package base.User;
 import lombok.*;
 import javax.annotation.processing.Generated;
 import java.util.Objects;
@@ -9,4 +9,7 @@ public class User {
 
     String username;
     @ToString.Exclude String password;
+    String nome;
+    String cognome;
+    String mail;
 }

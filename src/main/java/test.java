@@ -1,11 +1,6 @@
-import base.Eventi;
 import base.Evento;
 import base.Meeting;
-import base.User;
 
-import java.lang.invoke.MethodType;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

@@ -12,11 +12,12 @@ import java.util.TimeZone;
  */
 public class DBManager {
     public static final String JDBC_Driver_MySQL = "com.mysql.cj.jdbc.Driver";
-    public static final String JDBC_URL_MySQL = "jdbc:mysql://localhost:3306/testdb?user=federico&password=fe21de21&serverTimezone=" + TimeZone.getDefault().getID();
+    public static final String JDBC_URL_MySQL = "jdbc:mysql://localhost:3306/together?user=federico&password=fe21de21&serverTimezone=" + TimeZone.getDefault().getID();
 
     public static String JDBC_Driver = null;
     public static String JDBC_URL = null;
     static Connection connection;
+    public static Statement statement;
 
     public static void setConnection(String Driver, String URL) {
         JDBC_Driver = Driver;
@@ -52,6 +53,15 @@ public class DBManager {
         System.out.println("-- ResultSet Concurrency --");
         System.out.println("Supports CONCUR_READ_ONLY: " + md.supportsResultSetType(ResultSet.CONCUR_READ_ONLY));
         System.out.println("Supports CONCUR_UPDATABLE: " + md.supportsResultSetType(ResultSet.CONCUR_UPDATABLE));
+    }
+
+    public static void MySQLConnection() throws SQLException {
+        DBManager.setConnection(
+                DBManager.JDBC_Driver_MySQL,
+                DBManager.JDBC_URL_MySQL);
+        statement = DBManager.getConnection().createStatement(
+                ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE);
     }
 
     public static void close() throws SQLException {

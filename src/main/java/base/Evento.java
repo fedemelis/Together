@@ -8,7 +8,7 @@ import java.util.Date;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Evento {
-
+    //TODO: il primo attributo di ogni evento dovrebbe essere un numero generato autonomamente dal dbms
     @NonNull String nome;
     @NonNull String creator;
     @NonNull String category;

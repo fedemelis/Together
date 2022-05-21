@@ -52,14 +52,14 @@ public class BasicOperations {
         } catch (SQLException e) {
             statement.executeUpdate("DROP TABLE IF EXISTS tbprova");
             //statement.executeUpdate("CREATE TABLE tbprova (id INTEGER PRIMARY KEY, title VARCHAR(30), author VARCHAR(30), pages INTEGER)");
-            /*statement.executeUpdate(
+            statement.executeUpdate(
                     "INSERT INTO tbprova (id, title, author, pages) VALUES(1, 'The Lord of the Rings', 'Tolkien', 241)");
             statement.executeUpdate(
                     "INSERT INTO tbprova (id, title, author, pages) VALUES(2, 'Fight Club', 'Palahniuk', 212)");
             statement.executeUpdate(
                     "INSERT INTO tbprova (id, title, author, pages) VALUES(3, 'Computer Networks', 'Tanenbaum', 313)");
             statement.executeUpdate(
-                    "INSERT INTO tbprova (id, title, author, pages) VALUES(4, 'Affective Computing', 'Picard', 127)");*/
+                    "INSERT INTO tbprova (id, title, author, pages) VALUES(4, 'Affective Computing', 'Picard', 127)");
         }
     }
 

@@ -1,5 +1,8 @@
 package base;
 
-public interface Eventi {
+public interface Eventi{
+
+
+
 }
 

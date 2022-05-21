@@ -1,6 +1,8 @@
 package view;
 
-import base.User;
+import base.User.User;
+import base.User.UserDB;
+import lombok.SneakyThrows;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,9 +28,10 @@ public class LoginView extends JFrame{
     private JLabel labelNome;
     private JLabel labelCognome;
     private JPanel createNewAccountPanel;
+    private JPasswordField tbNewAccountPassword;
     private ArrayList<User> userList;
 
-    public LoginView() {
+    public LoginView()  {
 
         super("Together");
         setContentPane(mainPanel);
@@ -36,13 +39,9 @@ public class LoginView extends JFrame{
         setVisible(true);
         makeHighlighted_HandCursor(creaacc);
 
+        int i = 0;
         ////////////////////////////
-        userList = new ArrayList<User>();
-        userList.add(new User("Federico", "pass"));
-        userList.add(new User("Fede", "pass"));
-        userList.add(new User("Luca", "pass"));
-        userList.add(new User("Melis", "pass"));
-        userList.add(new User("D'Amato", "pass"));
+        //old list
         ////////////////////////////
 
         creaacc.addMouseListener(new MouseAdapter() {
@@ -64,8 +63,8 @@ public class LoginView extends JFrame{
         btnEntra.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String risposta = TryLogin(tbUser.getText(), tbPassword.getPassword());
-                if (risposta == "Successo"){
+                //String risposta = TryLogin(tbUser.getText(), tbPassword.getPassword());
+                /*if (risposta == "Successo"){
                     mainPanel.removeAll();
                     //mainPanel.add(//TODO: aggiungere il pannello per per il login al calendario);
                     mainPanel.repaint();
@@ -74,7 +73,18 @@ public class LoginView extends JFrame{
                 else{
                     errorLabel.setText(risposta);
                     errorLabel.setForeground(Color.red);
-                }
+                }*/
+            }
+        });
+        btnCrea.addActionListener(new ActionListener() {
+            @SneakyThrows
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                    String query = String.format("INSERT INTO user (username, password, nome, cognome, mail) VALUES('%s', '%s', '%s', '%s', '%s')",
+                            tbUsername.getText(), tbConfirmPasword.getPassword(), tbNome.getText(), tbCognome.getText(), tbEmail.getText());
+                    System.out.println(query);
+                    UserDB userManager = new UserDB();
+                    userManager.insertUser(query);
             }
         });
     }
@@ -92,7 +102,7 @@ public class LoginView extends JFrame{
         label.setFont(font.deriveFont(attributes));
     }
 
-    public String TryLogin(String user, char[] pass){
+    /*public String TryLogin(String user, char[] pass){
         if (!user.isEmpty() && (pass.length > 0)){
             User tmp = new User(user, String.valueOf(pass));
             if (userList.contains(tmp)){
@@ -101,7 +111,7 @@ public class LoginView extends JFrame{
             return "Username o password errati";
         }
         return "Compila tutti i campi";
-    }
+    }*/
 
     public void setPlaceHolder(JTextField tb, String s){
         tb.setForeground(Color.GRAY);
