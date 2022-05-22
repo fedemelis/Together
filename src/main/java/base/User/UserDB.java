@@ -7,6 +7,8 @@ import res.DBManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDB implements UserDAO {
 
@@ -33,9 +35,9 @@ public class UserDB implements UserDAO {
     }
 
     @Override
-    public ResultSet selectAllUser() throws SQLException {
+    public List<User> selectAllUser() throws SQLException {
         ResultSet rs = statement.executeQuery("SELECT * FROM user");
-        return rs;
+        return rsToUserList(rs);
     }
 
     @Override
@@ -54,21 +56,39 @@ public class UserDB implements UserDAO {
     }
 
     @Override
-    public void insertUser(String username, char[] password, String nome, String cognome, String mail) throws SQLException {
+    public void insertUser(String username, String password, String nome, String cognome, String mail) throws SQLException {
         String query = String.format("INSERT INTO user (username, password, nome, cognome, mail) VALUES('%s', '%s', '%s', '%s', '%s')",
                username, password, nome, cognome, mail);
         statement.executeUpdate(query);
     }
 
     public User rsToUser(ResultSet rs) throws SQLException {
-        rs.next();
-        User u = new User(
-                rs.getString(1),
-                rs.getString(2),
-                rs.getString(3),
-                rs.getString(4),
-                rs.getString(5));
-        return u;
+        if (rs.next()){
+            User u = new User(
+                    rs.getString(1),
+                    rs.getString(2),
+                    rs.getString(3),
+                    rs.getString(4),
+                    rs.getString(5));
+            return u;
+        }
+        return null;
+
+    }
+
+    public List<User> rsToUserList(ResultSet rs) throws SQLException {
+        List<User> userList = new ArrayList<User>();
+        while (rs.next()) {
+            User u = new User(
+                    rs.getString(1),
+                    rs.getString(2),
+                    rs.getString(3),
+                    rs.getString(4),
+                    rs.getString(5));
+            userList.add(u);
+        }
+        return userList;
+
 
     }
 }

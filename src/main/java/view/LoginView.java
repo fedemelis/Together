@@ -42,9 +42,7 @@ public class LoginView extends JFrame{
 
         int i = 0;
         UserDB userManager = new UserDB();
-        ////////////////////////////
-        //old list
-        ////////////////////////////
+
 
         creaacc.addMouseListener(new MouseAdapter() {
             @Override
@@ -63,28 +61,50 @@ public class LoginView extends JFrame{
 
 
         btnEntra.addActionListener(new ActionListener() {
+            @SneakyThrows
             @Override
             public void actionPerformed(ActionEvent e) {
-                //String risposta = TryLogin(tbUser.getText(), tbPassword.getPassword());
-                /*if (risposta == "Successo"){
-                    mainPanel.removeAll();
-                    //mainPanel.add(//TODO: aggiungere il pannello per per il login al calendario);
-                    mainPanel.repaint();
-                    mainPanel.revalidate();
+                if (tbUser.getText() != null && tbPassword.getPassword() != null){
+                    User u = userManager.selectUserByUsername(tbUser.getText());
+                    if(u != null){
+                        if (u.getPassword().equals(tbPassword.getText())) {
+                            System.out.println("ACCESSO ESEGUITO");
+                            errorLabel.setText("");
+                            /*mainPanel.removeAll();
+                            mainPanel.add(TODO: aggiungere il pannello per per il login al calendario);
+                            mainPanel.repaint();
+                            mainPanel.revalidate();*/
+                        }
+                        else {
+                            errorLabel.setText("Password errata");
+                            errorLabel.setForeground(Color.red);
+                        }
+                    }
+                    else {
+                        errorLabel.setText("Username errato");
+                        errorLabel.setForeground(Color.red);
+                    }
                 }
-                else{
-                    errorLabel.setText(risposta);
+                else {
+                    errorLabel.setText("Compila tutti i campi");
                     errorLabel.setForeground(Color.red);
-                }*/
+                }
             }
         });
         btnCrea.addActionListener(new ActionListener() {
             @SneakyThrows
             @Override
             public void actionPerformed(ActionEvent e) {
-                    System.out.println(userManager.selectUserByUsername("fede"));
-                    //System.out.println(query);
-                    //userManager.insertUser(tbUsername.getText(), tbConfirmPasword.getPassword(), tbNome.getText(), tbCognome.getText(), tbEmail.getText());
+                if(tbNewAccountPassword.getText().equals(tbConfirmPasword.getText())){
+                    userManager.insertUser(tbUsername.getText(), tbConfirmPasword.getText(), tbNome.getText(), tbCognome.getText(), tbEmail.getText());
+                }
+                else{
+                    //TODO: aggiungere una label che stampa che le password non coincidono
+                    System.out.println("NO");
+                    System.out.println(tbNewAccountPassword.getText());
+                    System.out.println(tbConfirmPasword.getText());
+
+                }
             }
         });
     }
@@ -101,17 +121,6 @@ public class LoginView extends JFrame{
         attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         label.setFont(font.deriveFont(attributes));
     }
-
-    /*public String TryLogin(String user, char[] pass){
-        if (!user.isEmpty() && (pass.length > 0)){
-            User tmp = new User(user, String.valueOf(pass));
-            if (userList.contains(tmp)){
-                return "Successo";
-            }
-            return "Username o password errati";
-        }
-        return "Compila tutti i campi";
-    }*/
 
     public void setPlaceHolder(JTextField tb, String s){
         tb.setForeground(Color.GRAY);

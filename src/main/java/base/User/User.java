@@ -8,7 +8,7 @@ import java.util.Objects;
 public class User {
 
     String username;
-    @ToString.Exclude String password;
+    String password;
     String nome;
     String cognome;
     String mail;

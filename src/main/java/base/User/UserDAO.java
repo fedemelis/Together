@@ -2,6 +2,8 @@ package base.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 interface UserDAO {
 
@@ -9,7 +11,7 @@ interface UserDAO {
     User selectUserByUsername(String username) throws SQLException;
 
     //return all user
-    ResultSet selectAllUser() throws SQLException;
+    List<User> selectAllUser() throws SQLException;
 
     //change username by username
     void updateUsernameByUsername(String oldUsername, String newUsername);
@@ -21,7 +23,7 @@ interface UserDAO {
     void deleteUserByUsername(String username);
 
     //insert new user
-    void insertUser(String username, char[] password, String nome, String cognome, String mail) throws SQLException;
+    void insertUser(String username, String password, String nome, String cognome, String mail) throws SQLException;
 
 
 

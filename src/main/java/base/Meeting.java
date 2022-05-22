@@ -4,8 +4,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Date;
-@Getter
-@Setter
 public class Meeting extends Evento implements Eventi{
 
     @Getter @Setter @NonNull String link;
