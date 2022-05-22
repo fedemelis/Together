@@ -29,6 +29,10 @@ public class LoginView extends JFrame{
     private JLabel labelCognome;
     private JPanel createNewAccountPanel;
     private JPasswordField tbNewAccountPassword;
+    private JPanel loginCalendarPanel;
+    private JTextField tbCalendarName;
+    private JTextField tbCalendarCode;
+    private JButton button1;
     private ArrayList<User> userList;
 
     @SneakyThrows
@@ -64,7 +68,7 @@ public class LoginView extends JFrame{
             @SneakyThrows
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (tbUser.getText() != null && tbPassword.getPassword() != null){
+                if (!tbUser.getText().isEmpty() && !tbPassword.getText().isEmpty()){
                     User u = userManager.selectUserByUsername(tbUser.getText());
                     if(u != null){
                         if (u.getPassword().equals(tbPassword.getText())) {
@@ -91,6 +95,7 @@ public class LoginView extends JFrame{
                 }
             }
         });
+
         btnCrea.addActionListener(new ActionListener() {
             @SneakyThrows
             @Override

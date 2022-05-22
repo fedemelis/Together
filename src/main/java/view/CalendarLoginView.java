@@ -5,13 +5,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class CalendarLoginView extends JFrame{
-    private JPanel mainPanel;
+    private JPanel loginCalendarPanel;
     private JTextField tbCalendarName;
     private JPasswordField tbCalendarCode;
     private JButton btnAccedi;
 
     public CalendarLoginView(){
-        setContentPane(mainPanel);
+        setContentPane(loginCalendarPanel);
         setSize(500, 500);
         setVisible(true);
 
