@@ -32,7 +32,7 @@ public class LoginView extends JFrame{
     private JPanel loginCalendarPanel;
     private JTextField tbCalendarName;
     private JTextField tbCalendarCode;
-    private JButton button1;
+    private JButton btnLoginCalendar;
     private ArrayList<User> userList;
 
     @SneakyThrows
@@ -74,10 +74,10 @@ public class LoginView extends JFrame{
                         if (u.getPassword().equals(tbPassword.getText())) {
                             System.out.println("ACCESSO ESEGUITO");
                             errorLabel.setText("");
-                            /*mainPanel.removeAll();
-                            mainPanel.add(TODO: aggiungere il pannello per per il login al calendario);
+                            mainPanel.removeAll();
+                            mainPanel.add(loginCalendarPanel);
                             mainPanel.repaint();
-                            mainPanel.revalidate();*/
+                            mainPanel.revalidate();
                         }
                         else {
                             errorLabel.setText("Password errata");
