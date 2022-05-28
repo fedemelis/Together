@@ -1,13 +1,13 @@
 package view;
 
 import javax.swing.*;
+import javax.swing.table.TableColumn;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class CalendarLoginView extends JFrame{
     private JPanel loginCalendarPanel;
-    private JTextField tbCalendarName;
-    private JPasswordField tbCalendarCode;
+    private JTable table1;
     private JButton btnAccedi;
 
     public CalendarLoginView(){
@@ -15,6 +15,9 @@ public class CalendarLoginView extends JFrame{
         setSize(500, 500);
         setVisible(true);
 
+        TableColumn t = new TableColumn();
+
+        table1.addColumn(t);
 
         btnAccedi.addActionListener(new ActionListener() {
             @Override
@@ -23,4 +26,12 @@ public class CalendarLoginView extends JFrame{
             }
         });
     }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(CalendarLoginView::new);
+
+    }
 }
+
+
+

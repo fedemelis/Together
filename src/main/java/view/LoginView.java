@@ -33,6 +33,7 @@ public class LoginView extends JFrame{
     private JTextField tbCalendarName;
     private JTextField tbCalendarCode;
     private JButton button1;
+    private JLabel passErrLabel;
     private ArrayList<User> userList;
 
     @SneakyThrows
@@ -103,12 +104,26 @@ public class LoginView extends JFrame{
                 if(tbNewAccountPassword.getText().equals(tbConfirmPasword.getText())){
                     userManager.insertUser(tbUsername.getText(), tbConfirmPasword.getText(), tbNome.getText(), tbCognome.getText(), tbEmail.getText());
                 }
-                else{
-                    //TODO: aggiungere una label che stampa che le password non coincidono
+                /*else if(tbNewAccountPassword.getText().equals(tbConfirmPasword.getText())){
+                    passErrLabel.setText("La password non coincide");
+                    errorLabel.setForeground(Color.red);
                     System.out.println("NO");
-                    System.out.println(tbNewAccountPassword.getText());
-                    System.out.println(tbConfirmPasword.getText());
 
+                }*/
+            }
+        });
+        tbConfirmPasword.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(!tbNewAccountPassword.getText().equals(tbConfirmPasword.getText())){
+                    passErrLabel.setText("La password non coincide");
+                    passErrLabel.setForeground(Color.red);
+                    System.out.println("NO");
+
+                }
+                else{
+                    passErrLabel.setText("");
+                    System.out.println("SI");
                 }
             }
         });
