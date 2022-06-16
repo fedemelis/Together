@@ -9,6 +9,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.TextAttribute;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
 
 public class LoginView extends JFrame{
@@ -32,8 +34,60 @@ public class LoginView extends JFrame{
     private JPanel loginCalendarPanel;
     private JTextField tbCalendarName;
     private JTextField tbCalendarCode;
-    private JButton button1;
     private JLabel passErrLabel;
+    private JPanel calendarPanel;
+    private JButton btnLoginCalendar;
+    private JPanel lun;
+    private JPanel mar;
+    private JPanel mer;
+    private JPanel gio;
+    private JPanel ven;
+    private JPanel sab;
+    private JPanel dom;
+    private JPanel a1;
+    private JList list1;
+    private JLabel l00;
+    private JList list3;
+    private JList list4;
+    private JList list5;
+    private JList list6;
+    private JList list7;
+    private JList list8;
+    private JList list9;
+    private JList list10;
+    private JList list11;
+    private JList list12;
+    private JList list13;
+    private JList list14;
+    private JList list15;
+    private JList list16;
+    private JList list17;
+    private JList list18;
+    private JList list19;
+    private JList list20;
+    private JList list21;
+    private JList list22;
+    private JList list23;
+    private JList list24;
+    private JList list25;
+    private JList list26;
+    private JList list27;
+    private JList list28;
+    private JList list29;
+    private JList list30;
+    private JList list31;
+    private JList list32;
+    private JList list33;
+    private JList list34;
+    private JList list35;
+    private JList list36;
+    private JList list37;
+    private JList list38;
+    private JList list39;
+    private JList list40;
+    private JList list41;
+    private JList list2;
+    private JList list42;
     private ArrayList<User> userList;
 
     @SneakyThrows
@@ -45,7 +99,8 @@ public class LoginView extends JFrame{
         setVisible(true);
         makeHighlighted_HandCursor(creaacc);
 
-        int i = 0;
+        initCalendarPanel();
+
         UserDB userManager = new UserDB();
 
 
@@ -75,10 +130,10 @@ public class LoginView extends JFrame{
                         if (u.getPassword().equals(tbPassword.getText())) {
                             System.out.println("ACCESSO ESEGUITO");
                             errorLabel.setText("");
-                            /*mainPanel.removeAll();
-                            mainPanel.add(TODO: aggiungere il pannello per per il login al calendario);
+                            mainPanel.removeAll();
+                            mainPanel.add(calendarPanel);
                             mainPanel.repaint();
-                            mainPanel.revalidate();*/
+                            mainPanel.revalidate();
                         }
                         else {
                             errorLabel.setText("Password errata");
@@ -101,15 +156,9 @@ public class LoginView extends JFrame{
             @SneakyThrows
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(tbNewAccountPassword.getText().equals(tbConfirmPasword.getText())){
+                if(tbNewAccountPassword.getText().equals(tbConfirmPasword.getText())) {
                     userManager.insertUser(tbUsername.getText(), tbConfirmPasword.getText(), tbNome.getText(), tbCognome.getText(), tbEmail.getText());
                 }
-                /*else if(tbNewAccountPassword.getText().equals(tbConfirmPasword.getText())){
-                    passErrLabel.setText("La password non coincide");
-                    errorLabel.setForeground(Color.red);
-                    System.out.println("NO");
-
-                }*/
             }
         });
         tbConfirmPasword.addKeyListener(new KeyAdapter() {
@@ -164,6 +213,89 @@ public class LoginView extends JFrame{
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(LoginView::new);
+    }
+
+    public void initCalendarPanel(){
+        //setSize(1500, 1000);
+        /*calendarPanel.setLayout(new GridLayout(7, 7));
+        calendarPanel.add(new CalendarCell());
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));
+        calendarPanel.add(new JButton("1"));*/
+
+        Calendar calendar = Calendar.getInstance();
+        int year = 2022;
+        int month = 6;
+        List<String> dName = new ArrayList<String>();
+        dName.add("Lun");
+        dName.add("Mar");
+        dName.add("Mer");
+        dName.add("Gio");
+        dName.add("Ven");
+        dName.add("Sab");
+        dName.add("Dom");
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month - 1);  //  month jan as 0 so start from 0
+        calendar.set(Calendar.DATE, 1);
+        int startDay = calendar.get(Calendar.DAY_OF_WEEK) - 1;  //  get day of week -1 to index
+        calendar.add(Calendar.DATE, -startDay);
+        for (Component com : calendarPanel.getComponents()) {
+            JPanel p = (JPanel) com;
+            for(Component lab : p.getComponents()) {
+                if(lab instanceof JLabel){
+                    JLabel l = (JLabel) lab;
+                    if(!dName.contains(l.getText())) {
+                        l.setText(calendar.get(Calendar.DATE) + "");
+                        calendar.add(Calendar.DATE, 1);
+                    }
+                }
+            }
+        }
     }
 
 }
