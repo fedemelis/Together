@@ -8,10 +8,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.TextAttribute;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.time.LocalDate;
+import java.time.Year;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class LoginView extends JFrame{
     private JPanel mainPanel;
@@ -98,8 +98,7 @@ public class LoginView extends JFrame{
         setVisible(true);
         makeHighlighted_HandCursor(creaacc);
 
-        initCalendarPanel();
-
+        //usato per le operazioni sul database degli utenti
         UserDB userManager = new UserDB();
 
 
@@ -128,6 +127,8 @@ public class LoginView extends JFrame{
                     if(u != null){
                         if (u.getPassword().equals(tbPassword.getText())) {
                             System.out.println("ACCESSO ESEGUITO");
+                            User currentUser = new User(tbUser.getText());
+                            initCalendarPanel(currentUser);
                             errorLabel.setText("");
                             mainPanel.removeAll();
                             mainPanel.add(calendarPanel);
@@ -214,19 +215,16 @@ public class LoginView extends JFrame{
         SwingUtilities.invokeLater(LoginView::new);
     }
 
-    public void initCalendarPanel(){
-
-        Calendar calendar = Calendar.getInstance();
-        int year = 2022;
-        int month = 6;
+    public void initCalendarPanel(User currentUser){
+        /*lista per i valori da escludere nei for*/
         List<String> dName = new ArrayList<String>();
-        dName.add("Lun");
-        dName.add("Mar");
-        dName.add("Mer");
-        dName.add("Gio");
-        dName.add("Ven");
-        dName.add("Sab");
-        dName.add("Dom");
+        dName.addAll(Arrays.asList("Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"));
+        //preparo il calendar
+        Calendar calendar = Calendar.getInstance();
+        LocalDate date = LocalDate.now();
+        //prendo anno e mese corrente
+        int year = date.getYear();
+        int month = date.getMonthValue();
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month - 1);
         calendar.set(Calendar.DATE, 1);
@@ -238,6 +236,7 @@ public class LoginView extends JFrame{
                 if(lab instanceof JLabel){
                     JLabel l = (JLabel) lab;
                     if(!dName.contains(l.getText())) {
+                        l.setFont(new Font("SansSerif", Font.PLAIN, 20));
                         p.setBorder(BorderFactory.createLineBorder(Color.black));
                         l.setText(calendar.get(Calendar.DATE) + " ");
                         calendar.add(Calendar.DATE, 1);

@@ -1,5 +1,4 @@
-import base.Evento;
-import base.Meeting;
+import base.Event.Event;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,7 +10,7 @@ public class test {
         Date d = new Date();
         Meeting e = new Meeting("Prova", "ddo", "dd", "ddd", d, "d");
         System.out.println(e);
-        List<Evento> l = new ArrayList<>();
+        List<Event> l = new ArrayList<>();
         l.add(e);
         System.out.println(l);
     }

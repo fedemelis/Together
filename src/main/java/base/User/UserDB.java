@@ -88,7 +88,5 @@ public class UserDB implements UserDAO {
             userList.add(u);
         }
         return userList;
-
-
     }
 }

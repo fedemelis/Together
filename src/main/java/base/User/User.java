@@ -12,4 +12,9 @@ public class User {
     String nome;
     String cognome;
     String mail;
+
+    //for saving currentUser
+    public User(String username){
+        this.username = username;
+    }
 }
