@@ -36,23 +36,31 @@ public class EventDB implements EventDAO{
     }
 
     @Override
-    public void insertEvent(int idEvent, Calendar cal, String nome, Date date, User u, String type, String desc) {
-
+    public void insertEvent(int idEvent, Calendar cal, String nome, Date date, User u, String type, String desc)  throws SQLException{
+        String query = String.format("INSERT INTO event (idevent, idcalendar, nome, data, iduser, type, desc) VALUES(%d, %d, '%s', '%s', '%s', '%s', '%s')",
+                idEvent, cal.getIdCalendar(), nome, date, u.getUsername(), type, desc);
+        statement.executeUpdate(query);
     }
 
     @Override
-    public void insertEventWithType(int idEvent, Calendar cal, String nome, Date date, User u, String type) {
-
+    public void insertEventWithType(int idEvent, Calendar cal, String nome, Date date, User u, String type) throws SQLException{
+        String query = String.format("INSERT INTO event (idevent, idcalendar, nome, data, iduser, type, desc) VALUES(%d, %d, '%s', '%s', '%s', '%s', NULL)",
+                idEvent, cal.getIdCalendar(), nome, date, u.getUsername(), type);
+        statement.executeUpdate(query);
     }
 
     @Override
-    public void insertEventWithDesc(int idEvent, Calendar cal, String nome, Date date, User u, String desc) {
-
+    public void insertEventWithDesc(int idEvent, Calendar cal, String nome, Date date, User u, String desc) throws SQLException{
+        String query = String.format("INSERT INTO event (idevent, idcalendar, nome, data, iduser, type, desc) VALUES(%d, %d, '%s', '%s', '%s', NULL, '%s')",
+                idEvent, cal.getIdCalendar(), nome, date, u.getUsername(), desc);
+        statement.executeUpdate(query);
     }
 
     @Override
-    public void insertEvent(int idEvent, Calendar cal, String nome, Date date, User u) {
-
+    public void insertEvent(int idEvent, Calendar cal, String nome, Date date, User u) throws SQLException {
+        String query = String.format("INSERT INTO event (idevent, idcalendar, nome, data, iduser, type, desc) VALUES(%d, %d, '%s', '%s', '%s', NULL, NULL)",
+                idEvent, cal.getIdCalendar(), nome, date, u.getUsername());
+        statement.executeUpdate(query);
     }
 
     @Override

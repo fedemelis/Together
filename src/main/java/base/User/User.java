@@ -5,6 +5,7 @@ import java.util.Objects;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     String username;

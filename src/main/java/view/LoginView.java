@@ -1,5 +1,7 @@
 package view;
 
+import base.Calendar.CalendarDB;
+import base.Event.EventDB;
 import base.User.User;
 import base.User.UserDB;
 import lombok.SneakyThrows;
@@ -9,7 +11,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.TextAttribute;
 import java.time.LocalDate;
-import java.time.Year;
 import java.util.*;
 import java.util.List;
 
@@ -31,12 +32,8 @@ public class LoginView extends JFrame{
     private JLabel labelCognome;
     private JPanel createNewAccountPanel;
     private JPasswordField tbNewAccountPassword;
-    private JPanel loginCalendarPanel;
-    private JTextField tbCalendarName;
-    private JTextField tbCalendarCode;
     private JLabel passErrLabel;
     private JPanel calendarPanel;
-    private JButton btnLoginCalendar;
     private JPanel lun;
     private JPanel mar;
     private JPanel mer;
@@ -86,11 +83,27 @@ public class LoginView extends JFrame{
     private JList list40;
     private JList list41;
     private JList list42;
-    private JButton button1;
+    private JButton addEvent;
+    private JPanel loginCalendar;
+    private JTextField tbCodice;
+    private JPasswordField tbCalendarPassword;
+    private JButton btgGoToCalendar;
+    private JLabel currentUser;
+    private JLabel creaCalendario;
+    private JLabel loginErrorCalendar;
+    private JPanel createEvent;
+    private JTextField eventName;
+    private JTextField eventData;
+    private JTextField eventType;
+    private JTextField eventDesc;
+    private JButton btnCancellaNuovoEvento;
+    private JButton btnConfermaNuovoEvento;
     private ArrayList<User> userList;
+    private User currUser;
 
     @SneakyThrows
     public LoginView()  {
+
 
         super("Together");
         setContentPane(mainPanel);
@@ -100,8 +113,17 @@ public class LoginView extends JFrame{
 
         //usato per le operazioni sul database degli utenti
         UserDB userManager = new UserDB();
+        CalendarDB calendarManager = new CalendarDB();
+        EventDB eventManager = new EventDB();
 
+        mainPanel.removeAll();
+        mainPanel.add(calendarPanel);
+        mainPanel.repaint();
+        mainPanel.revalidate();
 
+        /**
+         * porta alla creazione di un nuovo utente
+         */
         creaacc.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -117,7 +139,9 @@ public class LoginView extends JFrame{
             }
         });
 
-
+        /**
+         * esegue il login per un utente
+         */
         btnEntra.addActionListener(new ActionListener() {
             @SneakyThrows
             @Override
@@ -127,13 +151,14 @@ public class LoginView extends JFrame{
                     if(u != null){
                         if (u.getPassword().equals(tbPassword.getText())) {
                             System.out.println("ACCESSO ESEGUITO");
-                            User currentUser = new User(tbUser.getText());
-                            initCalendarPanel(currentUser);
+                            currUser = new User(tbUser.getText());
                             errorLabel.setText("");
+                            initLoginCalendar(currUser);
                             mainPanel.removeAll();
-                            mainPanel.add(calendarPanel);
+                            mainPanel.add(loginCalendar);
                             mainPanel.repaint();
                             mainPanel.revalidate();
+
                         }
                         else {
                             errorLabel.setText("Password errata");
@@ -152,6 +177,9 @@ public class LoginView extends JFrame{
             }
         });
 
+        /**
+         * crea un nuovo utente
+         */
         btnCrea.addActionListener(new ActionListener() {
             @SneakyThrows
             @Override
@@ -161,6 +189,9 @@ public class LoginView extends JFrame{
                 }
             }
         });
+        /**
+         * controlla se le password coincidono
+         */
         tbConfirmPasword.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -176,13 +207,63 @@ public class LoginView extends JFrame{
                 }
             }
         });
+
+        /**
+         * fa il login al calendario
+         */
+        btgGoToCalendar.addActionListener(new ActionListener() {
+            @SneakyThrows
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!tbCodice.getText().isEmpty() && !tbCalendarPassword.getText().isEmpty()){
+                    base.Calendar.Calendar c = calendarManager.selectCalendarByID(Integer.valueOf(tbCodice.getText()));
+                    if(c != null){
+                        if(c.getPass().equals(tbCalendarPassword.getText())){
+                            System.out.println("Accesso al calendario");
+                            initCalendarPanel(currUser);
+                            mainPanel.removeAll();
+                            mainPanel.add(calendarPanel);
+                            mainPanel.repaint();
+                            mainPanel.revalidate();
+                        }
+                        else{
+                            loginErrorCalendar.setText("Password errata");
+                            loginErrorCalendar.setForeground(Color.red);
+                        }
+                    }
+                    else{
+                        loginErrorCalendar.setText("Calendario non trovato");
+                        loginErrorCalendar.setForeground(Color.red);
+                    }
+                }
+                else{
+                    loginErrorCalendar.setText("Compila tutti i campi");
+                    loginErrorCalendar.setForeground(Color.red);
+                }
+            }
+        });
+        /**
+        bottone per l'inserimento di un nuovo evento nel calendario
+         */
+        addEvent.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                mainPanel.repaint();
+                mainPanel.revalidate();
+
+            }
+        });
     }
 
-    /*
+    /**
     Methods
      */
 
-
+    /**
+     * rende una label più visibile e aggiunge la mano al puntatore quando ci passi sopra
+     * @param label
+     */
     public void makeHighlighted_HandCursor(JLabel label){
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         Font font = label.getFont();
@@ -191,6 +272,11 @@ public class LoginView extends JFrame{
         label.setFont(font.deriveFont(attributes));
     }
 
+    /**
+     * aggiunge un placeholder ad una textbox
+     * @param tb
+     * @param s
+     */
     public void setPlaceHolder(JTextField tb, String s){
         tb.setForeground(Color.GRAY);
         tb.addFocusListener(new FocusListener() {
@@ -215,7 +301,11 @@ public class LoginView extends JFrame{
         SwingUtilities.invokeLater(LoginView::new);
     }
 
-    public void initCalendarPanel(User currentUser){
+    /**
+     * inizializza il calendario
+     * @param currUser
+     */
+    public void initCalendarPanel(User currUser){
         /*lista per i valori da escludere nei for*/
         List<String> dName = new ArrayList<String>();
         dName.addAll(Arrays.asList("Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"));
@@ -247,6 +337,16 @@ public class LoginView extends JFrame{
                 }
             }
         }
+    }
+
+    /**
+     * inizializza la schermata di login al calendario
+     * @param u
+     */
+    public void initLoginCalendar(User u){
+        makeHighlighted_HandCursor(creaCalendario);
+        currentUser.setText(u.getUsername());
+        setPlaceHolder(tbCodice, "Inserire codice calendario");
     }
 
 }
