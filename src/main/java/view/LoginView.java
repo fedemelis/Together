@@ -44,9 +44,8 @@ public class LoginView extends JFrame{
     private JPanel ven;
     private JPanel sab;
     private JPanel dom;
-    private JPanel a1;
     private JList list1;
-    private JLabel l00;
+    private JList list2;
     private JList list3;
     private JList list4;
     private JList list5;
@@ -86,8 +85,8 @@ public class LoginView extends JFrame{
     private JList list39;
     private JList list40;
     private JList list41;
-    private JList list2;
     private JList list42;
+    private JButton button1;
     private ArrayList<User> userList;
 
     @SneakyThrows
@@ -216,57 +215,6 @@ public class LoginView extends JFrame{
     }
 
     public void initCalendarPanel(){
-        //setSize(1500, 1000);
-        /*calendarPanel.setLayout(new GridLayout(7, 7));
-        calendarPanel.add(new CalendarCell());
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));
-        calendarPanel.add(new JButton("1"));*/
 
         Calendar calendar = Calendar.getInstance();
         int year = 2022;
@@ -280,9 +228,9 @@ public class LoginView extends JFrame{
         dName.add("Sab");
         dName.add("Dom");
         calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month - 1);  //  month jan as 0 so start from 0
+        calendar.set(Calendar.MONTH, month - 1);
         calendar.set(Calendar.DATE, 1);
-        int startDay = calendar.get(Calendar.DAY_OF_WEEK) - 1;  //  get day of week -1 to index
+        int startDay = calendar.get(Calendar.DAY_OF_WEEK) - 2;
         calendar.add(Calendar.DATE, -startDay);
         for (Component com : calendarPanel.getComponents()) {
             JPanel p = (JPanel) com;
@@ -290,8 +238,12 @@ public class LoginView extends JFrame{
                 if(lab instanceof JLabel){
                     JLabel l = (JLabel) lab;
                     if(!dName.contains(l.getText())) {
-                        l.setText(calendar.get(Calendar.DATE) + "");
+                        p.setBorder(BorderFactory.createLineBorder(Color.black));
+                        l.setText(calendar.get(Calendar.DATE) + " ");
                         calendar.add(Calendar.DATE, 1);
+                    }
+                    if(l.getText().equals("Dom")){
+                        l.setForeground(Color.red);
                     }
                 }
             }
