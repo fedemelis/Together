@@ -1,6 +1,7 @@
 package view;
 
 import base.Calendar.CalendarDB;
+import base.Event.Event;
 import base.Event.EventDB;
 import base.User.User;
 import base.User.UserDB;
@@ -10,6 +11,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.TextAttribute;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
@@ -116,11 +120,6 @@ public class LoginView extends JFrame{
         CalendarDB calendarManager = new CalendarDB();
         EventDB eventManager = new EventDB();
 
-        mainPanel.removeAll();
-        mainPanel.add(calendarPanel);
-        mainPanel.repaint();
-        mainPanel.revalidate();
-
         /**
          * porta alla creazione di un nuovo utente
          */
@@ -220,7 +219,7 @@ public class LoginView extends JFrame{
                     if(c != null){
                         if(c.getPass().equals(tbCalendarPassword.getText())){
                             System.out.println("Accesso al calendario");
-                            initCalendarPanel(currUser);
+                            initCalendarPanel(currUser, eventManager, c);
                             mainPanel.removeAll();
                             mainPanel.add(calendarPanel);
                             mainPanel.repaint();
@@ -242,17 +241,14 @@ public class LoginView extends JFrame{
                 }
             }
         });
-        /**
+        /*
         bottone per l'inserimento di un nuovo evento nel calendario
          */
-        addEvent.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        addEvent.addActionListener(e -> {
 
-                mainPanel.repaint();
-                mainPanel.revalidate();
+            mainPanel.repaint();
+            mainPanel.revalidate();
 
-            }
         });
     }
 
@@ -262,7 +258,7 @@ public class LoginView extends JFrame{
 
     /**
      * rende una label più visibile e aggiunge la mano al puntatore quando ci passi sopra
-     * @param label
+     * @param label è la label che vogliamo higlightare
      */
     public void makeHighlighted_HandCursor(JLabel label){
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -305,10 +301,9 @@ public class LoginView extends JFrame{
      * inizializza il calendario
      * @param currUser
      */
-    public void initCalendarPanel(User currUser){
+    public void initCalendarPanel(User currUser, EventDB eventManager, base.Calendar.Calendar currentCalendar) throws SQLException {
         /*lista per i valori da escludere nei for*/
-        List<String> dName = new ArrayList<String>();
-        dName.addAll(Arrays.asList("Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"));
+        List<String> dName = new ArrayList<>(Arrays.asList("Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"));
         //preparo il calendar
         Calendar calendar = Calendar.getInstance();
         LocalDate date = LocalDate.now();
@@ -320,21 +315,34 @@ public class LoginView extends JFrame{
         calendar.set(Calendar.DATE, 1);
         int startDay = calendar.get(Calendar.DAY_OF_WEEK) - 2;
         calendar.add(Calendar.DATE, -startDay);
+        //prendo gli eventi
+        List<Event> eventList = new ArrayList<>();
+        eventList = eventManager.selectAllEventOfCalendar(currentCalendar);
+        System.out.println(eventList);
         for (Component com : calendarPanel.getComponents()) {
             JPanel p = (JPanel) com;
-            for(Component lab : p.getComponents()) {
-                if(lab instanceof JLabel){
-                    JLabel l = (JLabel) lab;
-                    if(!dName.contains(l.getText())) {
-                        l.setFont(new Font("SansSerif", Font.PLAIN, 20));
-                        p.setBorder(BorderFactory.createLineBorder(Color.black));
-                        l.setText(calendar.get(Calendar.DATE) + " ");
-                        calendar.add(Calendar.DATE, 1);
-                    }
-                    if(l.getText().equals("Dom")){
-                        l.setForeground(Color.red);
-                    }
+            if(p.getComponentCount() == 2){
+                Component c = p.getComponent(0);
+                if(c instanceof JLabel){
+                    JLabel l = (JLabel) c;
+                    l.setFont(new Font("SansSerif", Font.PLAIN, 20));
+                    p.setBorder(BorderFactory.createLineBorder(Color.black));
+                    l.setText(calendar.get(Calendar.DATE) + " ");
                 }
+                c = p.getComponent(1);
+                if(c instanceof JList<?>){
+                    JList list = (JList) c;
+                    DefaultListModel model = new DefaultListModel();
+
+                    for(Event e : eventList){
+                        String calendarDate = new SimpleDateFormat("yyyy-MM-dd 00:00:00").format(calendar.getTime());
+                        if(e.getDate().equals(calendarDate)){
+                            model.addElement(e.getNome());
+                        }
+                    }
+                    list.setModel(model);
+                }
+                calendar.add(Calendar.DATE, 1);
             }
         }
     }
