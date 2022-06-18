@@ -1,12 +1,7 @@
 package base.Event;
 
-import base.User.User;
 import lombok.*;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor

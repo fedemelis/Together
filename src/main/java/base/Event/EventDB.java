@@ -30,36 +30,42 @@ public class EventDB implements EventDAO{
 
     @Override
     public List<Event> selectAllEventOfCalendar(Calendar calendar) throws SQLException {
-        String query = String.format("SELECT * FROM event WHERE idcalendar = %d", calendar.getIdCalendar());
-        //System.out.println("idcalendar " + calendar.getIdCalendar());
+        String query = String.format("SELECT * FROM event WHERE idCalendar = %d", calendar.getIdCalendar());
+        ResultSet rs = statement.executeQuery(query);
+        return rsToEventList(rs);
+    }
+
+    @Override
+    public List<Event> selectAllEventOfSpecifiedMonth(Calendar calendar, int month) throws SQLException {
+        String query = String.format("SELECT * FROM event WHERE idCalendar = %d and month(data) = %d", calendar.getIdCalendar(), month);
         ResultSet rs = statement.executeQuery(query);
         return rsToEventList(rs);
     }
 
     @Override
     public void insertEvent(int idEvent, Calendar cal, String nome, String date, User u, String type, String desc)  throws SQLException{
-        String query = String.format("INSERT INTO event (idevent, idcalendar, nome, data, iduser, type, desc) VALUES(%d, %d, '%s', '%s', '%s', '%s', '%s')",
+        String query = String.format("INSERT INTO event (idevent, idCalendar, nome, data, iduser, type, desc) VALUES(%d, %d, '%s', '%s', '%s', '%s', '%s')",
                 idEvent, cal.getIdCalendar(), nome, date, u.getUsername(), type, desc);
         statement.executeUpdate(query);
     }
 
     @Override
     public void insertEventWithType(int idEvent, Calendar cal, String nome, String date, User u, String type) throws SQLException{
-        String query = String.format("INSERT INTO event (idevent, idcalendar, nome, data, iduser, type, desc) VALUES(%d, %d, '%s', '%s', '%s', '%s', NULL)",
+        String query = String.format("INSERT INTO event (idevent, idCalendar, nome, data, iduser, type, desc) VALUES(%d, %d, '%s', '%s', '%s', '%s', NULL)",
                 idEvent, cal.getIdCalendar(), nome, date, u.getUsername(), type);
         statement.executeUpdate(query);
     }
 
     @Override
     public void insertEventWithDesc(int idEvent, Calendar cal, String nome, String date, User u, String desc) throws SQLException{
-        String query = String.format("INSERT INTO event (idevent, idcalendar, nome, data, iduser, type, desc) VALUES(%d, %d, '%s', '%s', '%s', NULL, '%s')",
+        String query = String.format("INSERT INTO event (idevent, idCalendar, nome, data, iduser, type, desc) VALUES(%d, %d, '%s', '%s', '%s', NULL, '%s')",
                 idEvent, cal.getIdCalendar(), nome, date, u.getUsername(), desc);
         statement.executeUpdate(query);
     }
 
     @Override
     public void insertEvent(int idEvent, Calendar cal, String nome, String date, User u) throws SQLException {
-        String query = String.format("INSERT INTO event (idevent, idcalendar, nome, data, iduser, type, desc) VALUES(%d, %d, '%s', '%s', '%s', NULL, NULL)",
+        String query = String.format("INSERT INTO event (idevent, idCalendar, nome, data, iduser, type, desc) VALUES(%d, %d, '%s', '%s', '%s', NULL, NULL)",
                 idEvent, cal.getIdCalendar(), nome, date, u.getUsername());
         statement.executeUpdate(query);
     }

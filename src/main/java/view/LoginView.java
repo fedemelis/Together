@@ -18,6 +18,8 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
 
+
+
 public class LoginView extends JFrame{
     private JPanel mainPanel;
     private JPanel loginPanel;
@@ -111,7 +113,13 @@ public class LoginView extends JFrame{
 
         super("Together");
         setContentPane(mainPanel);
-        setSize(500, 500);
+        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+        // width will store the width of the screen
+        int width = (int)size.getWidth();
+        // height will store the height of the screen
+        int height = (int)size.getHeight();
+        setSize(width, height);
+        setResizable(false);
         setVisible(true);
         makeHighlighted_HandCursor(creaacc);
 
@@ -245,10 +253,31 @@ public class LoginView extends JFrame{
         bottone per l'inserimento di un nuovo evento nel calendario
          */
         addEvent.addActionListener(e -> {
-
+            mainPanel.removeAll();
+            mainPanel.add(createEvent);
             mainPanel.repaint();
             mainPanel.revalidate();
+        });
 
+        btnCancellaNuovoEvento.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                eventName.setText("");
+                eventData.setText("");
+                eventType.setText("");
+                eventDesc.setText("");
+                mainPanel.removeAll();
+                mainPanel.add(calendarPanel);
+                mainPanel.repaint();
+                mainPanel.revalidate();
+            }
+        });
+
+        btnConfermaNuovoEvento.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
         });
     }
 
@@ -303,10 +332,12 @@ public class LoginView extends JFrame{
      */
     public void initCalendarPanel(User currUser, EventDB eventManager, base.Calendar.Calendar currentCalendar) throws SQLException {
         /*lista per i valori da escludere nei for*/
-        List<String> dName = new ArrayList<>(Arrays.asList("Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"));
+        //List<String> dName = new ArrayList<>(Arrays.asList("Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"));
         //preparo il calendar
         Calendar calendar = Calendar.getInstance();
+        //prendo la data attuale
         LocalDate date = LocalDate.now();
+        int thisDay = date.getDayOfMonth();
         //prendo anno e mese corrente
         int year = date.getYear();
         int month = date.getMonthValue();
@@ -317,7 +348,7 @@ public class LoginView extends JFrame{
         calendar.add(Calendar.DATE, -startDay);
         //prendo gli eventi
         List<Event> eventList = new ArrayList<>();
-        eventList = eventManager.selectAllEventOfCalendar(currentCalendar);
+        eventList = eventManager.selectAllEventOfSpecifiedMonth(currentCalendar, month);
         System.out.println(eventList);
         for (Component com : calendarPanel.getComponents()) {
             JPanel p = (JPanel) com;
@@ -327,13 +358,16 @@ public class LoginView extends JFrame{
                     JLabel l = (JLabel) c;
                     l.setFont(new Font("SansSerif", Font.PLAIN, 20));
                     p.setBorder(BorderFactory.createLineBorder(Color.black));
-                    l.setText(calendar.get(Calendar.DATE) + " ");
+                    l.setText(calendar.get(Calendar.DATE) + "");
+                    int t = Integer.parseInt(l.getText());
+                    if(thisDay == t){
+                        l.setForeground(Color.blue);
+                    }
                 }
                 c = p.getComponent(1);
                 if(c instanceof JList<?>){
                     JList list = (JList) c;
                     DefaultListModel model = new DefaultListModel();
-
                     for(Event e : eventList){
                         String calendarDate = new SimpleDateFormat("yyyy-MM-dd 00:00:00").format(calendar.getTime());
                         if(e.getDate().equals(calendarDate)){
@@ -356,5 +390,4 @@ public class LoginView extends JFrame{
         currentUser.setText(u.getUsername());
         setPlaceHolder(tbCodice, "Inserire codice calendario");
     }
-
 }

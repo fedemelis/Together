@@ -13,6 +13,8 @@ public interface EventDAO {
     //return all event by calendar
     List<Event> selectAllEventOfCalendar(Calendar calendar) throws SQLException;
 
+    List<Event> selectAllEventOfSpecifiedMonth(Calendar calendar, int month) throws SQLException;
+
     void insertEvent(int idEvent, Calendar cal, String nome, String date, User u, String type, String desc) throws SQLException;
 
     void insertEventWithType(int idEvent, Calendar cal, String nome, String date, User u, String type) throws SQLException;

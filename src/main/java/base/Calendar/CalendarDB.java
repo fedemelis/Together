@@ -26,21 +26,21 @@ public class CalendarDB implements CalendarDAO{
 
     @Override
     public void insertCalendar(int idCalendar, String nome, String pass, String desc) throws SQLException {
-        String query = String.format("INSERT INTO calendar (idcalendar, nome, pass, desc) VALUES(%d, %s, '%s', '%s')",
+        String query = String.format("INSERT INTO calendar (idCalendar, nome, pass, desc) VALUES(%d, %s, '%s', '%s')",
                 idCalendar, nome, pass, desc);
         statement.executeUpdate(query);
     }
 
     @Override
     public void insertCalendar(int idCalendar, String nome, String pass) throws SQLException {
-        String query = String.format("INSERT INTO calendar (idcalendar, nome, pass, desc) VALUES(%d, %s, '%s', NULL)",
+        String query = String.format("INSERT INTO calendar (idCalendar, nome, pass, desc) VALUES(%d, %s, '%s', NULL)",
                 idCalendar, nome, pass);
         statement.executeUpdate(query);
     }
 
     @Override
     public Calendar selectCalendarByID(int idCalendar) throws SQLException {
-        String query = String.format("SELECT * FROM calendar WHERE idcalendar = %d", idCalendar);
+        String query = String.format("SELECT * FROM calendar WHERE idCalendar = %d", idCalendar);
         ResultSet rs = statement.executeQuery(query);
         return rsToCalendar(rs);
     }
