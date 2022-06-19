@@ -12,7 +12,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.TextAttribute;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
@@ -104,8 +103,15 @@ public class LoginView extends JFrame{
     private JTextField eventDesc;
     private JButton btnCancellaNuovoEvento;
     private JButton btnConfermaNuovoEvento;
+    private JButton avanti;
+    private JButton indietro;
+    private JLabel yearShow;
     private ArrayList<User> userList;
     private User currUser;
+    //private Calendar calendar;
+    private int year;
+    private int month;
+    private base.Calendar.Calendar c;
 
     @SneakyThrows
     public LoginView()  {
@@ -119,9 +125,11 @@ public class LoginView extends JFrame{
         // height will store the height of the screen
         int height = (int)size.getHeight();
         setSize(width, height);
-        setResizable(false);
+        //setResizable(false);
         setVisible(true);
         makeHighlighted_HandCursor(creaacc);
+
+
 
         //usato per le operazioni sul database degli utenti
         UserDB userManager = new UserDB();
@@ -223,11 +231,14 @@ public class LoginView extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(!tbCodice.getText().isEmpty() && !tbCalendarPassword.getText().isEmpty()){
-                    base.Calendar.Calendar c = calendarManager.selectCalendarByID(Integer.valueOf(tbCodice.getText()));
+                    c = calendarManager.selectCalendarByID(Integer.valueOf(tbCodice.getText()));
                     if(c != null){
                         if(c.getPass().equals(tbCalendarPassword.getText())){
                             System.out.println("Accesso al calendario");
-                            initCalendarPanel(currUser, eventManager, c);
+                            //costruisco il calendario
+                            calendarSetup();
+                            //setto il calendario
+                            initCalendarPanel(currUser, eventManager, c, year, month);
                             mainPanel.removeAll();
                             mainPanel.add(calendarPanel);
                             mainPanel.repaint();
@@ -257,6 +268,7 @@ public class LoginView extends JFrame{
             mainPanel.add(createEvent);
             mainPanel.repaint();
             mainPanel.revalidate();
+            //initCreateEvent();
         });
 
         btnCancellaNuovoEvento.addActionListener(new ActionListener() {
@@ -277,6 +289,37 @@ public class LoginView extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
 
+
+            }
+        });
+
+        //vai al mese precedente
+        indietro.addActionListener(new ActionListener() {
+            @SneakyThrows
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(month == 1){
+                    month = 12;
+                    year--;
+                }
+                else{
+                    month--;
+                }
+                initCalendarPanel(currUser, eventManager, c, year, month);
+            }
+        });
+        avanti.addActionListener(new ActionListener() {
+            @SneakyThrows
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(month == 12){
+                    month = 1;
+                    year++;
+                }
+                else{
+                    month++;
+                }
+                initCalendarPanel(currUser, eventManager, c, year, month);
             }
         });
     }
@@ -330,25 +373,34 @@ public class LoginView extends JFrame{
      * inizializza il calendario
      * @param currUser
      */
-    public void initCalendarPanel(User currUser, EventDB eventManager, base.Calendar.Calendar currentCalendar) throws SQLException {
+    public void initCalendarPanel(User currUser, EventDB eventManager, base.Calendar.Calendar currentCalendar, int year, int month) throws SQLException {
         /*lista per i valori da escludere nei for*/
         //List<String> dName = new ArrayList<>(Arrays.asList("Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"));
-        //preparo il calendar
-        Calendar calendar = Calendar.getInstance();
         //prendo la data attuale
+        Calendar calendar = Calendar.getInstance();
         LocalDate date = LocalDate.now();
         int thisDay = date.getDayOfMonth();
+        int thisMonth = date.getMonthValue();
+        int thisYear = date.getYear();
         //prendo anno e mese corrente
-        int year = date.getYear();
-        int month = date.getMonthValue();
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month - 1);
         calendar.set(Calendar.DATE, 1);
-        int startDay = calendar.get(Calendar.DAY_OF_WEEK) - 2;
+        int startDay = calendar.get(Calendar.DAY_OF_WEEK);
+        if(startDay == 1){
+            startDay = 6;
+        }
+        else{
+            startDay -= 2;
+        }
+        System.out.println(calendar.get(Calendar.DAY_OF_WEEK));
         calendar.add(Calendar.DATE, -startDay);
         //prendo gli eventi
-        List<Event> eventList = new ArrayList<>();
+        List<Event> eventList;
+        //prendo tutti gli eventi del mese
         eventList = eventManager.selectAllEventOfSpecifiedMonth(currentCalendar, month);
+        SimpleDateFormat df = new SimpleDateFormat("MMMM yyyy");
+        yearShow.setText(df.format(calendar.getTime()).toUpperCase(Locale.ROOT));
         System.out.println(eventList);
         for (Component com : calendarPanel.getComponents()) {
             JPanel p = (JPanel) com;
@@ -360,10 +412,14 @@ public class LoginView extends JFrame{
                     p.setBorder(BorderFactory.createLineBorder(Color.black));
                     l.setText(calendar.get(Calendar.DATE) + "");
                     int t = Integer.parseInt(l.getText());
-                    if(thisDay == t){
+                    l.setForeground(Color.black);
+                    if(thisDay == t && thisMonth == month && thisYear == year){
                         l.setForeground(Color.blue);
                     }
                 }
+                /**
+                 * seleziono le jlist
+                 */
                 c = p.getComponent(1);
                 if(c instanceof JList<?>){
                     JList list = (JList) c;
@@ -389,5 +445,44 @@ public class LoginView extends JFrame{
         makeHighlighted_HandCursor(creaCalendario);
         currentUser.setText(u.getUsername());
         setPlaceHolder(tbCodice, "Inserire codice calendario");
+    }
+
+    /*public void initCreateEvent(){
+        UtilDateModel model = new UtilDateModel();
+        Properties p = new Properties();
+        p.put("text.today", "Today");
+        p.put("text.month", "Month");
+        p.put("text.year", "Year");
+        JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new JFormattedTextField.AbstractFormatter() {
+
+            private String datePattern = "yyyy-MM-dd";
+            private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
+
+            @Override
+            public Object stringToValue(String text) throws ParseException {
+                return dateFormatter.parseObject(text);
+            }
+
+            @Override
+            public String valueToString(Object value) throws ParseException {
+                if (value != null) {
+                    Calendar cal = (Calendar) value;
+                    return dateFormatter.format(cal.getTime());
+                }
+
+                return "";
+            }
+        });
+        createEvent.add(datePicker);
+    }*/
+
+    public void calendarSetup(){
+        //preparo il calendar
+        //calendar = Calendar.getInstance();
+        //prendo la data attuale
+        LocalDate date = LocalDate.now();
+        year = date.getYear();
+        month = date.getMonthValue();
     }
 }
