@@ -6,12 +6,18 @@ import base.Event.EventDB;
 import base.User.User;
 import base.User.UserDB;
 import lombok.SneakyThrows;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.TextAttribute;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
@@ -128,6 +134,8 @@ public class LoginView extends JFrame{
         //setResizable(false);
         setVisible(true);
         makeHighlighted_HandCursor(creaacc);
+        makeHighlighted_HandCursor(creaCalendario);
+        initCreateEvent();
 
 
 
@@ -268,7 +276,6 @@ public class LoginView extends JFrame{
             mainPanel.add(createEvent);
             mainPanel.repaint();
             mainPanel.revalidate();
-            //initCreateEvent();
         });
 
         btnCancellaNuovoEvento.addActionListener(new ActionListener() {
@@ -289,6 +296,7 @@ public class LoginView extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                    //TODO:
 
             }
         });
@@ -386,6 +394,8 @@ public class LoginView extends JFrame{
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month - 1);
         calendar.set(Calendar.DATE, 1);
+        SimpleDateFormat df = new SimpleDateFormat("MMMM yyyy");
+        yearShow.setText(df.format(calendar.getTime()).toUpperCase(Locale.ROOT));
         int startDay = calendar.get(Calendar.DAY_OF_WEEK);
         if(startDay == 1){
             startDay = 6;
@@ -399,8 +409,6 @@ public class LoginView extends JFrame{
         List<Event> eventList;
         //prendo tutti gli eventi del mese
         eventList = eventManager.selectAllEventOfSpecifiedMonth(currentCalendar, month);
-        SimpleDateFormat df = new SimpleDateFormat("MMMM yyyy");
-        yearShow.setText(df.format(calendar.getTime()).toUpperCase(Locale.ROOT));
         System.out.println(eventList);
         for (Component com : calendarPanel.getComponents()) {
             JPanel p = (JPanel) com;
@@ -431,6 +439,12 @@ public class LoginView extends JFrame{
                         }
                     }
                     list.setModel(model);
+                    list.addListSelectionListener(new ListSelectionListener() {
+                        @Override
+                        public void valueChanged(ListSelectionEvent e) {
+                            System.out.println("Ciao");
+                        }
+                    });
                 }
                 calendar.add(Calendar.DATE, 1);
             }
@@ -447,7 +461,7 @@ public class LoginView extends JFrame{
         setPlaceHolder(tbCodice, "Inserire codice calendario");
     }
 
-    /*public void initCreateEvent(){
+    public void initCreateEvent(){
         UtilDateModel model = new UtilDateModel();
         Properties p = new Properties();
         p.put("text.today", "Today");
@@ -470,12 +484,17 @@ public class LoginView extends JFrame{
                     Calendar cal = (Calendar) value;
                     return dateFormatter.format(cal.getTime());
                 }
-
                 return "";
             }
         });
+        //createEvent.setLayout(new FlowLayout());
         createEvent.add(datePicker);
-    }*/
+        mainPanel.revalidate();
+        mainPanel.repaint();
+
+
+
+    }
 
     public void calendarSetup(){
         //preparo il calendar

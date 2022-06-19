@@ -73,7 +73,6 @@ public class UserDB implements UserDAO {
             return u;
         }
         return null;
-
     }
 
     public List<User> rsToUserList(ResultSet rs) throws SQLException {
