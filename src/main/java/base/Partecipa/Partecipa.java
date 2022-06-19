@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class Partecipa {
     @NonNull int idcalendar;
     @NonNull String u;

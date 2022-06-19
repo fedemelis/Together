@@ -3,6 +3,8 @@ package view;
 import base.Calendar.CalendarDB;
 import base.Event.Event;
 import base.Event.EventDB;
+import base.Partecipa.Partecipa;
+import base.Partecipa.PartecipaDB;
 import base.User.User;
 import base.User.UserDB;
 import lombok.SneakyThrows;
@@ -112,6 +114,8 @@ public class LoginView extends JFrame{
     private JButton avanti;
     private JButton indietro;
     private JLabel yearShow;
+    private JList oldCalendar;
+    private JLabel doUserHasSavedAccount;
     private ArrayList<User> userList;
     private User currUser;
     //private Calendar calendar;
@@ -139,10 +143,11 @@ public class LoginView extends JFrame{
 
 
 
-        //usato per le operazioni sul database degli utenti
+        //usato per le operazioni sul database
         UserDB userManager = new UserDB();
         CalendarDB calendarManager = new CalendarDB();
         EventDB eventManager = new EventDB();
+        PartecipaDB partecipaManager = new PartecipaDB();
 
         /**
          * porta alla creazione di un nuovo utente
@@ -176,7 +181,7 @@ public class LoginView extends JFrame{
                             System.out.println("ACCESSO ESEGUITO");
                             currUser = new User(tbUser.getText());
                             errorLabel.setText("");
-                            initLoginCalendar(currUser);
+                            initLoginCalendar(currUser, partecipaManager);
                             mainPanel.removeAll();
                             mainPanel.add(loginCalendar);
                             mainPanel.repaint();
@@ -455,10 +460,19 @@ public class LoginView extends JFrame{
      * inizializza la schermata di login al calendario
      * @param u
      */
-    public void initLoginCalendar(User u){
+    @SneakyThrows
+    public void initLoginCalendar(User u, PartecipaDB partecipaManager){
         makeHighlighted_HandCursor(creaCalendario);
         currentUser.setText(u.getUsername());
         setPlaceHolder(tbCodice, "Inserire codice calendario");
+        DefaultListModel model = new DefaultListModel();
+        List<Partecipa> partecipaList;
+        partecipaList = partecipaManager.selectAllCalendarOfSpecificUser(u.getUsername());
+        for(Partecipa p : partecipaList){
+            doUserHasSavedAccount.setText("Calendari salvati:");
+            model.addElement(p.getIdcalendar());
+        }
+        oldCalendar.setModel(model);
     }
 
     public void initCreateEvent(){

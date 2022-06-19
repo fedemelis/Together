@@ -29,7 +29,7 @@ public class PartecipaDB implements  PartecipaDAO{
 
     @Override
     public List<Partecipa> selectAllCalendarOfSpecificUser(String user) throws SQLException {
-        String query = String.format("SELECT * FROM partecipa WHERE idutente = '%d'", user);
+        String query = String.format("SELECT * FROM partecipa WHERE idutente = '%s'", user);
         ResultSet rs = statement.executeQuery(query);
         return rsToPartecipaList(rs);
     }
@@ -50,10 +50,10 @@ public class PartecipaDB implements  PartecipaDAO{
     public List<Partecipa> rsToPartecipaList(ResultSet rs) throws SQLException {
         List<Partecipa> partecipaList = new ArrayList<Partecipa>();
         while (rs.next()) {
-            Partecipa e = new Partecipa(
-                    rs.getInt(1),
-                    rs.getString(2));
-            partecipaList.add(e);
+            Partecipa p = new Partecipa(
+                    rs.getInt(2),
+                    rs.getString(1));
+            partecipaList.add(p);
         }
         return partecipaList;
     }
@@ -61,8 +61,8 @@ public class PartecipaDB implements  PartecipaDAO{
     public Partecipa rsToPartecipa(ResultSet rs) throws SQLException {
         if (rs.next()){
             Partecipa p = new Partecipa(
-                    rs.getInt(1),
-                    rs.getString(2));
+                    rs.getInt(2),
+                    rs.getString(1));
             return p;
         }
         return null;
