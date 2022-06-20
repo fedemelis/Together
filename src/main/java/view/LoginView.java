@@ -13,8 +13,6 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
@@ -118,12 +116,30 @@ public class LoginView extends JFrame{
     private JLabel yearShow;
     private JList oldCalendar;
     private JLabel doUserHasSavedAccount;
+    private JPanel createNewCalendar;
+    private JTextField newCalendarCode;
+    private JTextField newCalendarName;
+    private JPasswordField newCalendarPass;
+    private JPasswordField newCalendarPassConfirm;
+    private JButton undoCreateCalendar;
+    private JButton createCalendarConfirm;
+    private JLabel createCalendarError;
+    private JTextField newCalendarDesc;
+    private JLabel labelUsername;
+    private JLabel labelEmail;
+    private JLabel labelPassword;
+    private JLabel labelConfirmPassword;
+    private JLabel labelLoginUsername;
+    private JLabel labelLoginPassword;
+    private JButton showPass;
     private ArrayList<User> userList;
     private User currUser;
     //private Calendar calendar;
     private int year;
     private int month;
     private base.Calendar.Calendar c;
+    private boolean first = true;
+    private boolean isShow = false;
 
     @SneakyThrows
     public LoginView()  {
@@ -144,7 +160,6 @@ public class LoginView extends JFrame{
         initCreateEvent();
 
 
-
         //usato per le operazioni sul database
         UserDB userManager = new UserDB();
         CalendarDB calendarManager = new CalendarDB();
@@ -162,10 +177,10 @@ public class LoginView extends JFrame{
                 mainPanel.add(createNewAccountPanel);
                 mainPanel.repaint();
                 mainPanel.revalidate();
-                setPlaceHolder(tbUsername, "Username");
+                /*setPlaceHolder(tbUsername, "Username");
                 setPlaceHolder(tbEmail, "E-mail");
                 setPlaceHolder(tbNome, "Nome");
-                setPlaceHolder(tbCognome, "Cognome");
+                setPlaceHolder(tbCognome, "Cognome");*/
             }
         });
 
@@ -183,6 +198,8 @@ public class LoginView extends JFrame{
                             System.out.println("ACCESSO ESEGUITO");
                             currUser = new User(tbUser.getText());
                             errorLabel.setText("");
+                            tbPassword.setBorder(BorderFactory.createLineBorder(Color.black));
+                            tbUser.setBorder(BorderFactory.createLineBorder(Color.black));
                             initLoginCalendar(currUser, partecipaManager);
                             mainPanel.removeAll();
                             mainPanel.add(loginCalendar);
@@ -191,19 +208,44 @@ public class LoginView extends JFrame{
 
                         }
                         else {
-                            errorLabel.setText("Password errata");
+                            errorLabel.setText("Username o password errati");
                             errorLabel.setForeground(Color.red);
+                            tbPassword.setBorder(BorderFactory.createLineBorder(Color.red));
+                            tbUser.setBorder(BorderFactory.createLineBorder(Color.red));
+
                         }
                     }
                     else {
-                        errorLabel.setText("Username errato");
+                        errorLabel.setText("Username o password errati");
                         errorLabel.setForeground(Color.red);
+                        tbPassword.setBorder(BorderFactory.createLineBorder(Color.red));
+                        tbUser.setBorder(BorderFactory.createLineBorder(Color.red));
                     }
                 }
                 else {
+
                     errorLabel.setText("Compila tutti i campi");
                     errorLabel.setForeground(Color.red);
+                    tbPassword.setBorder(BorderFactory.createLineBorder(Color.red));
+                    tbUser.setBorder(BorderFactory.createLineBorder(Color.red));
                 }
+            }
+        });
+
+        tbUser.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                tbUser.setBorder(BorderFactory.createLineBorder(Color.black));
+                errorLabel.setText("");
+            }
+        });
+        tbPassword.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                tbPassword.setBorder(BorderFactory.createLineBorder(Color.black));
+                errorLabel.setText("");
             }
         });
 
@@ -214,11 +256,118 @@ public class LoginView extends JFrame{
             @SneakyThrows
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(tbNewAccountPassword.getText().equals(tbConfirmPasword.getText())) {
-                    userManager.insertUser(tbUsername.getText(), tbConfirmPasword.getText(), tbNome.getText(), tbCognome.getText(), tbEmail.getText());
+                if(!tbNome.getText().isEmpty() && !tbCognome.getText().isEmpty() && !tbUsername.getText().isEmpty() && !tbEmail.getText().isEmpty() && !tbNewAccountPassword.getText().isEmpty() && !tbConfirmPasword.getText().isEmpty()) {
+                    if(!tbNome.getText().isEmpty()){
+                        labelNome.setForeground(Color.black);
+                        tbNome.setBorder(BorderFactory.createLineBorder(Color.black));
+                    }
+                    if(!tbCognome.getText().isEmpty()){
+                        labelCognome.setForeground(Color.black);
+                        tbCognome.setBorder(BorderFactory.createLineBorder(Color.black));
+                    }
+                    if(!tbUsername.getText().isEmpty()){
+                        labelUsername.setForeground(Color.black);
+                        tbUsername.setBorder(BorderFactory.createLineBorder(Color.black));
+                    }
+                    if(!tbEmail.getText().isEmpty()){
+                        labelEmail.setForeground(Color.black);
+                        tbEmail.setBorder(BorderFactory.createLineBorder(Color.black));
+                    }
+                    if(!tbNewAccountPassword.getText().isEmpty()){
+                        labelPassword.setForeground(Color.black);
+                        tbNewAccountPassword.setBorder(BorderFactory.createLineBorder(Color.black));
+                    }
+                    if(!tbConfirmPasword.getText().isEmpty()){
+                        labelConfirmPassword.setForeground(Color.black);
+                        tbConfirmPasword.setBorder(BorderFactory.createLineBorder(Color.black));
+                    }
+                    if (!tbNewAccountPassword.getText().equals(tbConfirmPasword.getText())) {
+                        userManager.insertUser(tbUsername.getText(), tbConfirmPasword.getText(), tbNome.getText(), tbCognome.getText(), tbEmail.getText());
+                        //TODO riportare alla schermata di accesso
+                    }
+                }
+                else{
+                    if(tbNome.getText().isEmpty()){
+                        labelNome.setForeground(Color.red);
+                        tbNome.setBorder(BorderFactory.createLineBorder(Color.red));
+                    }
+                    if(tbCognome.getText().isEmpty()){
+                        labelCognome.setForeground(Color.red);
+                        tbCognome.setBorder(BorderFactory.createLineBorder(Color.red));
+                    }
+                    if(tbUsername.getText().isEmpty()){
+                        labelUsername.setForeground(Color.red);
+                        tbUsername.setBorder(BorderFactory.createLineBorder(Color.red));
+                    }
+                    if(tbEmail.getText().isEmpty()){
+                        labelEmail.setForeground(Color.red);
+                        tbEmail.setBorder(BorderFactory.createLineBorder(Color.red));
+                    }
+                    if(tbNewAccountPassword.getText().isEmpty()){
+                        labelPassword.setForeground(Color.red);
+                        tbNewAccountPassword.setBorder(BorderFactory.createLineBorder(Color.red));
+                    }
+                    if(tbConfirmPasword.getText().isEmpty()){
+                        labelConfirmPassword.setForeground(Color.red);
+                        tbConfirmPasword.setBorder(BorderFactory.createLineBorder(Color.red));
+                    }
                 }
             }
         });
+
+        /**
+         * cambio del colore mentre l'utente scrive nelle textbox
+         * */
+        tbNome.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                labelNome.setForeground(Color.black);
+                tbNome.setBorder(BorderFactory.createLineBorder(Color.black));
+            }
+        });
+        tbCognome.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                labelCognome.setForeground(Color.black);
+                tbCognome.setBorder(BorderFactory.createLineBorder(Color.black));
+            }
+        });
+        tbUsername.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                labelUsername.setForeground(Color.black);
+                tbUsername.setBorder(BorderFactory.createLineBorder(Color.black));
+            }
+        });
+        tbEmail.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                labelEmail.setForeground(Color.black);
+                tbEmail.setBorder(BorderFactory.createLineBorder(Color.black));
+            }
+        });
+        tbNewAccountPassword.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                labelPassword.setForeground(Color.black);
+                tbNewAccountPassword.setBorder(BorderFactory.createLineBorder(Color.black));
+            }
+        });
+        tbConfirmPasword.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                labelConfirmPassword.setForeground(Color.black);
+                tbConfirmPasword.setBorder(BorderFactory.createLineBorder(Color.black));
+            }
+        });
+
+
         /**
          * controlla se le password coincidono
          */
@@ -335,6 +484,87 @@ public class LoginView extends JFrame{
                     month++;
                 }
                 initCalendarPanel(currUser, eventManager, c, year, month);
+            }
+        });
+
+        creaCalendario.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                mainPanel.removeAll();
+                mainPanel.add(createNewCalendar);
+                mainPanel.repaint();
+                mainPanel.revalidate();
+            }
+        });
+        undoCreateCalendar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                newCalendarCode.setText("");
+                newCalendarName.setText("");
+                newCalendarPass.setText("");
+                newCalendarPassConfirm.setText("");
+                newCalendarDesc.setText("");
+                mainPanel.removeAll();
+                mainPanel.add(loginCalendar);
+                mainPanel.repaint();
+                mainPanel.revalidate();
+            }
+        });
+
+        newCalendarPassConfirm.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(!newCalendarPass.getText().equals(newCalendarPassConfirm.getText())){
+                    createCalendarError.setText("La password non coincide");
+                    createCalendarError.setForeground(Color.red);
+
+                }
+                else{
+                    createCalendarError.setText("");
+                }
+            }
+        });
+
+        createCalendarConfirm.addActionListener(new ActionListener() {
+            @SneakyThrows
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!newCalendarCode.getText().isEmpty() && !newCalendarName.getText().isEmpty() && !newCalendarPass.getText().isEmpty() && !newCalendarPassConfirm.getText().isEmpty()){
+                    if(newCalendarPass.getText().equals(newCalendarPassConfirm.getText())) {
+                        base.Calendar.Calendar c = calendarManager.selectCalendarByID(Integer.parseInt(newCalendarCode.getText()));
+                        if(c == null){
+                            if(newCalendarDesc.getText().isEmpty()){
+                                calendarManager.insertCalendar(Integer.parseInt(newCalendarCode.getText()), newCalendarName.getText(), newCalendarPass.getText());
+                            }
+                            else{
+                                calendarManager.insertCalendar(Integer.parseInt(newCalendarCode.getText()), newCalendarName.getText(), newCalendarPass.getText(), newCalendarDesc.getText());
+                            }
+                        }
+                        else{
+                            createCalendarError.setText("Esiste già un calendario con lo stesso codice");
+                            createCalendarError.setForeground(Color.red);
+                        }
+                    }
+                }
+                else{
+                    createCalendarError.setText("Compila tutti i campi richiesti");
+                    createCalendarError.setForeground(Color.red);
+                }
+            }
+        });
+
+        showPass.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!isShow) {
+                    isShow = true;
+                    tbPassword.setEchoChar((char) 0);
+                }
+                else{
+                    isShow = false;
+                    tbPassword.setEchoChar('•');
+                }
             }
         });
     }
@@ -475,11 +705,29 @@ public class LoginView extends JFrame{
             model.addElement(p.getIdcalendar());
         }
         oldCalendar.addListSelectionListener(new ListSelectionListener() {
+            @SneakyThrows
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                int i = (Integer) ((JList)e.getSource()).getSelectedValue();
-                System.out.println(i);
-                //TODO creare il metodo che esegua il login
+                if (!first) {
+                    int i = (Integer) ((JList) e.getSource()).getSelectedValue();
+                    System.out.println(i);
+                    first = true;
+                    CalendarDB calendarManager = new CalendarDB();
+                    c = calendarManager.selectCalendarByID(i);
+                    System.out.println("Accesso al calendario");
+                    //costruisco il calendario
+                    calendarSetup();
+                    //setto il calendario
+                    EventDB eventManager = new EventDB();
+                    initCalendarPanel(currUser, eventManager, c, year, month);
+                    mainPanel.removeAll();
+                    mainPanel.add(calendarPanel);
+                    mainPanel.repaint();
+                    mainPanel.revalidate();
+                }
+                else {
+                    first = false;
+                }
             }
         });
         oldCalendar.setModel(model);
