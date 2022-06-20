@@ -13,6 +13,8 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
@@ -472,6 +474,14 @@ public class LoginView extends JFrame{
             doUserHasSavedAccount.setText("Calendari salvati:");
             model.addElement(p.getIdcalendar());
         }
+        oldCalendar.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int i = (Integer) ((JList)e.getSource()).getSelectedValue();
+                System.out.println(i);
+                //TODO creare il metodo che esegua il login
+            }
+        });
         oldCalendar.setModel(model);
     }
 
