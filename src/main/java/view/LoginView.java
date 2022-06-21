@@ -132,6 +132,10 @@ public class LoginView extends JFrame{
     private JLabel labelLoginUsername;
     private JLabel labelLoginPassword;
     private JButton showPass;
+    private JButton goBackToUserLoginFromUserCreation;
+    private JLabel labelTitoloEvento;
+    private JLabel labelTipoEvento;
+    private JLabel labelDescrizioneEvento;
     private ArrayList<User> userList;
     private User currUser;
     //private Calendar calendar;
@@ -177,10 +181,13 @@ public class LoginView extends JFrame{
                 mainPanel.add(createNewAccountPanel);
                 mainPanel.repaint();
                 mainPanel.revalidate();
-                /*setPlaceHolder(tbUsername, "Username");
-                setPlaceHolder(tbEmail, "E-mail");
-                setPlaceHolder(tbNome, "Nome");
-                setPlaceHolder(tbCognome, "Cognome");*/
+                tbUser.setText("");
+                tbPassword.setText("");
+                errorLabel.setText("");
+                tbPassword.setBorder(BorderFactory.createLineBorder(Color.black));
+                tbUser.setBorder(BorderFactory.createLineBorder(Color.black));
+                isShow = false;
+                tbPassword.setEchoChar('•');
             }
         });
 
@@ -208,7 +215,12 @@ public class LoginView extends JFrame{
 
                         }
                         else {
-                            errorLabel.setText("Username o password errati");
+                            if(Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK)){
+                                errorLabel.setText("Username o password errati, prova a distattivare il caps lock");
+                            }
+                            else {
+                                errorLabel.setText("Username o password errati");
+                            }
                             errorLabel.setForeground(Color.red);
                             tbPassword.setBorder(BorderFactory.createLineBorder(Color.red));
                             tbUser.setBorder(BorderFactory.createLineBorder(Color.red));
@@ -216,14 +228,18 @@ public class LoginView extends JFrame{
                         }
                     }
                     else {
-                        errorLabel.setText("Username o password errati");
+                        if(Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK)){
+                            errorLabel.setText("Username o password errati, prova a distattivare il caps lock");
+                        }
+                        else {
+                            errorLabel.setText("Username o password errati");
+                        }
                         errorLabel.setForeground(Color.red);
                         tbPassword.setBorder(BorderFactory.createLineBorder(Color.red));
                         tbUser.setBorder(BorderFactory.createLineBorder(Color.red));
                     }
                 }
                 else {
-
                     errorLabel.setText("Compila tutti i campi");
                     errorLabel.setForeground(Color.red);
                     tbPassword.setBorder(BorderFactory.createLineBorder(Color.red));
@@ -452,7 +468,7 @@ public class LoginView extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                    //TODO:
+                    //TODO: confermare evento
 
             }
         });
@@ -565,6 +581,33 @@ public class LoginView extends JFrame{
                     isShow = false;
                     tbPassword.setEchoChar('•');
                 }
+            }
+        });
+        goBackToUserLoginFromUserCreation.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mainPanel.removeAll();
+                mainPanel.add(loginPanel);
+                mainPanel.repaint();
+                mainPanel.revalidate();
+                tbNome.setText("");
+                tbCognome.setText("");
+                tbUsername.setText("");
+                tbEmail.setText("");
+                tbNewAccountPassword.setText("");
+                tbConfirmPasword.setText("");
+                labelNome.setForeground(Color.black);
+                tbNome.setBorder(BorderFactory.createLineBorder(Color.black));
+                labelCognome.setForeground(Color.black);
+                tbCognome.setBorder(BorderFactory.createLineBorder(Color.black));
+                labelUsername.setForeground(Color.black);
+                tbUsername.setBorder(BorderFactory.createLineBorder(Color.black));
+                labelEmail.setForeground(Color.black);
+                tbEmail.setBorder(BorderFactory.createLineBorder(Color.black));
+                labelPassword.setForeground(Color.black);
+                tbNewAccountPassword.setBorder(BorderFactory.createLineBorder(Color.black));
+                labelConfirmPassword.setForeground(Color.black);
+                tbConfirmPasword.setBorder(BorderFactory.createLineBorder(Color.black));
             }
         });
     }
@@ -690,7 +733,6 @@ public class LoginView extends JFrame{
 
     /**
      * inizializza la schermata di login al calendario
-     * @param u
      */
     @SneakyThrows
     public void initLoginCalendar(User u, PartecipaDB partecipaManager){
@@ -733,6 +775,9 @@ public class LoginView extends JFrame{
         oldCalendar.setModel(model);
     }
 
+    /**
+     * crea il jdatePicker
+     */
     public void initCreateEvent(){
         UtilDateModel model = new UtilDateModel();
         Properties p = new Properties();
@@ -776,4 +821,6 @@ public class LoginView extends JFrame{
         year = date.getYear();
         month = date.getMonthValue();
     }
+
+
 }
