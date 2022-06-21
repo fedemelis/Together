@@ -444,6 +444,9 @@
                   </grid>
                 </constraints>
                 <properties/>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="false"/>
+                </clientProperties>
               </component>
             </children>
           </grid>
@@ -496,6 +499,9 @@
                   </grid>
                 </constraints>
                 <properties/>
+                <clientProperties>
+                  <html.disable class="java.lang.Boolean" value="false"/>
+                </clientProperties>
               </component>
             </children>
           </grid>
@@ -1694,7 +1700,7 @@
         <children>
           <component id="338c" class="javax.swing.JButton" binding="btnCancellaNuovoEvento">
             <constraints>
-              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
@@ -1703,10 +1709,10 @@
           </component>
           <component id="acb07" class="javax.swing.JTextField" binding="eventType">
             <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
-              <gridbag weightx="1.0" weighty="0.0"/>
+              <gridbag top="0" left="10" bottom="0" right="0" weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <horizontalAlignment value="0"/>
@@ -1714,7 +1720,7 @@
           </component>
           <component id="46ccc" class="javax.swing.JButton" binding="btnConfermaNuovoEvento">
             <constraints>
-              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
@@ -1723,19 +1729,19 @@
           </component>
           <component id="be0fb" class="javax.swing.JTextField" binding="eventName">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
-              <gridbag weightx="1.0" weighty="0.0"/>
+              <gridbag top="0" left="10" bottom="0" right="200" weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties/>
           </component>
           <component id="d7f04" class="javax.swing.JTextField" binding="eventDesc">
             <constraints>
-              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
-              <gridbag weightx="1.0" weighty="0.0"/>
+              <gridbag top="0" left="10" bottom="0" right="0" weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <horizontalAlignment value="0"/>
@@ -1752,7 +1758,7 @@
           </component>
           <component id="bbb9c" class="javax.swing.JLabel" binding="labelTipoEvento">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
@@ -1761,11 +1767,29 @@
           </component>
           <component id="75620" class="javax.swing.JLabel" binding="labelDescrizioneEvento">
             <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="Descrizione"/>
+            </properties>
+          </component>
+          <grid id="6e418" binding="DatePickerPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children/>
+          </grid>
+          <component id="69ec3" class="javax.swing.JLabel" binding="labelData">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Data *"/>
             </properties>
           </component>
         </children>

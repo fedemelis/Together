@@ -2,12 +2,13 @@ package base.Event;
 
 import lombok.*;
 
+
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Event {
 
-    @NonNull int idEvent;
+    @NonNull String idEvent;
     @NonNull int idcalendar;
     @NonNull String nome;
     @NonNull String date;

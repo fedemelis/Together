@@ -15,9 +15,16 @@ import org.jdatepicker.impl.UtilDateModel;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.HTMLWriter;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.TextAttribute;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -136,6 +143,8 @@ public class LoginView extends JFrame{
     private JLabel labelTitoloEvento;
     private JLabel labelTipoEvento;
     private JLabel labelDescrizioneEvento;
+    private JPanel DatePickerPanel;
+    private JLabel labelData;
     private ArrayList<User> userList;
     private User currUser;
     //private Calendar calendar;
@@ -144,6 +153,7 @@ public class LoginView extends JFrame{
     private base.Calendar.Calendar c;
     private boolean first = true;
     private boolean isShow = false;
+    HashMap<String, String> eventSelector = new HashMap();
 
     @SneakyThrows
     public LoginView()  {
@@ -162,7 +172,6 @@ public class LoginView extends JFrame{
         makeHighlighted_HandCursor(creaacc);
         makeHighlighted_HandCursor(creaCalendario);
         initCreateEvent();
-
 
         //usato per le operazioni sul database
         UserDB userManager = new UserDB();
@@ -299,7 +308,10 @@ public class LoginView extends JFrame{
                     }
                     if (!tbNewAccountPassword.getText().equals(tbConfirmPasword.getText())) {
                         userManager.insertUser(tbUsername.getText(), tbConfirmPasword.getText(), tbNome.getText(), tbCognome.getText(), tbEmail.getText());
-                        //TODO riportare alla schermata di accesso
+                        mainPanel.removeAll();
+                        mainPanel.add(loginPanel);
+                        mainPanel.repaint();
+                        mainPanel.revalidate();
                     }
                 }
                 else{
@@ -415,6 +427,7 @@ public class LoginView extends JFrame{
                     if(c != null){
                         if(c.getPass().equals(tbCalendarPassword.getText())){
                             System.out.println("Accesso al calendario");
+                            //TODO: se l'utente non ha mai fatto l'accesso a questo calendario, aggiungerlo alla lista
                             //costruisco il calendario
                             calendarSetup();
                             //setto il calendario
@@ -445,6 +458,7 @@ public class LoginView extends JFrame{
          */
         addEvent.addActionListener(e -> {
             mainPanel.removeAll();
+            System.out.println(eventSelector);
             mainPanel.add(createEvent);
             mainPanel.repaint();
             mainPanel.revalidate();
@@ -454,7 +468,6 @@ public class LoginView extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 eventName.setText("");
-                eventData.setText("");
                 eventType.setText("");
                 eventDesc.setText("");
                 mainPanel.removeAll();
@@ -467,7 +480,12 @@ public class LoginView extends JFrame{
         btnConfermaNuovoEvento.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                    Date d = (Date) (((JDatePickerImpl) DatePickerPanel.getComponent(0)).getModel().getValue());
+                    String newEventDate = new SimpleDateFormat("yyyy-MM-dd 00:00:00").format(d);
+                    System.out.println(newEventDate);
+                    if(!eventName.getText().isEmpty() && !newEventDate.isEmpty()){
 
+                    }
                     //TODO: confermare evento
 
             }
@@ -488,6 +506,8 @@ public class LoginView extends JFrame{
                 initCalendarPanel(currUser, eventManager, c, year, month);
             }
         });
+
+        //vai al mese successivo
         avanti.addActionListener(new ActionListener() {
             @SneakyThrows
             @Override
@@ -583,6 +603,7 @@ public class LoginView extends JFrame{
                 }
             }
         });
+
         goBackToUserLoginFromUserCreation.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -618,7 +639,6 @@ public class LoginView extends JFrame{
 
     /**
      * rende una label più visibile e aggiunge la mano al puntatore quando ci passi sopra
-     * @param label è la label che vogliamo higlightare
      */
     public void makeHighlighted_HandCursor(JLabel label){
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -630,8 +650,6 @@ public class LoginView extends JFrame{
 
     /**
      * aggiunge un placeholder ad una textbox
-     * @param tb
-     * @param s
      */
     public void setPlaceHolder(JTextField tb, String s){
         tb.setForeground(Color.GRAY);
@@ -659,7 +677,6 @@ public class LoginView extends JFrame{
 
     /**
      * inizializza il calendario
-     * @param currUser
      */
     public void initCalendarPanel(User currUser, EventDB eventManager, base.Calendar.Calendar currentCalendar, int year, int month) throws SQLException {
         /*lista per i valori da escludere nei for*/
@@ -689,7 +706,9 @@ public class LoginView extends JFrame{
         List<Event> eventList;
         //prendo tutti gli eventi del mese
         eventList = eventManager.selectAllEventOfSpecifiedMonth(currentCalendar, month);
-        System.out.println(eventList);
+        for(Event e : eventList){
+            System.out.println(e.getIdEvent());
+        }
         for (Component com : calendarPanel.getComponents()) {
             JPanel p = (JPanel) com;
             if(p.getComponentCount() == 2){
@@ -705,6 +724,7 @@ public class LoginView extends JFrame{
                         l.setForeground(Color.blue);
                     }
                 }
+
                 /**
                  * seleziono le jlist
                  */
@@ -715,17 +735,43 @@ public class LoginView extends JFrame{
                     for(Event e : eventList){
                         String calendarDate = new SimpleDateFormat("yyyy-MM-dd 00:00:00").format(calendar.getTime());
                         if(e.getDate().equals(calendarDate)){
-                            model.addElement(e.getNome());
+                            calendarDate = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
+                            //String text = String.format("<font color=#cc0029>'%s'</font> <font color=#ffcc00>'%s'</font>", e.getNome(), calendarDate);
+                            //System.out.println(text);
+                            //model.add(Html.fromHtml(text));
+                            model.addElement(eventSelector.put(e.getNome()+ " " + calendarDate, e.getIdEvent()));
+                            eventSelector.put(e.getNome()+ " " + calendarDate, e.getIdEvent());
                         }
                     }
+                    //attacco la lista di strinhe alla jlist
                     list.setModel(model);
+
+                    /**
+                     * recepisce il click sul singolo oggetto della lista di eventi
+                     */
                     list.addListSelectionListener(new ListSelectionListener() {
+                        boolean b = false;
                         @Override
                         public void valueChanged(ListSelectionEvent e) {
-                            System.out.println("Ciao");
+                            if(b == true){
+                                String s = (String) ((JList) e.getSource()).getSelectedValue();
+                                if(s != null){
+                                    System.out.println(eventSelector.get(s));
+                                    ((JList<?>) e.getSource()).clearSelection();
+                                }
+                                //System.out.println(s);
+                                //((JList<?>) e.getSource()).clearSelection();
+                                //TODO aggiungere la possibilità di gestire un evento
+                                //TODO elminiare i casi null
+                                //System.out.println(((JList<?>) e.getSource()).getSelectedIndex());
+                            }
+                            else{
+                                b = true;
+                            }
                         }
                     });
                 }
+                //mando avanti il calendario per la scrittura
                 calendar.add(Calendar.DATE, 1);
             }
         }
@@ -804,8 +850,7 @@ public class LoginView extends JFrame{
                 return "";
             }
         });
-        //createEvent.setLayout(new FlowLayout());
-        createEvent.add(datePicker);
+        DatePickerPanel.add(datePicker);
         mainPanel.revalidate();
         mainPanel.repaint();
 
@@ -813,6 +858,9 @@ public class LoginView extends JFrame{
 
     }
 
+    /**
+     * setto le variabili temporali
+     */
     public void calendarSetup(){
         //preparo il calendar
         //calendar = Calendar.getInstance();

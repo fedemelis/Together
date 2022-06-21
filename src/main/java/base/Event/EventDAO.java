@@ -15,14 +15,14 @@ public interface EventDAO {
 
     List<Event> selectAllEventOfSpecifiedMonth(Calendar calendar, int month) throws SQLException;
 
-    void insertEvent(int idEvent, Calendar cal, String nome, String date, User u, String type, String desc) throws SQLException;
+    void insertEvent(Calendar cal, String nome, String date, User u, String type, String desc) throws SQLException;
 
-    void insertEventWithType(int idEvent, Calendar cal, String nome, String date, User u, String type) throws SQLException;
+    void insertEventWithType(Calendar cal, String nome, String date, User u, String type) throws SQLException;
 
-    void insertEventWithDesc(int idEvent, Calendar cal, String nome, String date, User u, String desc) throws SQLException;
+    void insertEventWithDesc(Calendar cal, String nome, String date, User u, String desc) throws SQLException;
 
-    void insertEvent(int idEvent, Calendar cal, String nome, String date, User u) throws SQLException;
+    void insertEvent(Calendar cal, String nome, String date, User u) throws SQLException;
 
-    void deleteEventById(int idEvent) throws SQLException;
+    void deleteEventById(byte[] idEvent) throws SQLException;
 
 }
