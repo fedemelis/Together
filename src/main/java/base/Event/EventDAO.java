@@ -13,6 +13,8 @@ public interface EventDAO {
     //return all event by calendar
     List<Event> selectAllEventOfCalendar(Calendar calendar) throws SQLException;
 
+    Event selectEventByUUDI(String UUID) throws SQLException;
+
     List<Event> selectAllEventOfSpecifiedMonth(Calendar calendar, int month) throws SQLException;
 
     void insertEvent(Calendar cal, String nome, String date, User u, String type, String desc) throws SQLException;
@@ -23,6 +25,14 @@ public interface EventDAO {
 
     void insertEvent(Calendar cal, String nome, String date, User u) throws SQLException;
 
-    void deleteEventById(byte[] idEvent) throws SQLException;
+    void updateEvent(String nome, String date, User u, String type, String desc, String UUID) throws SQLException;
+
+    void updateEventWithType(String nome, String date, User u, String type, String UUID) throws SQLException;
+
+    void updateEventWithDesc(String nome, String date, User u, String desc, String UUID) throws SQLException;
+
+    void updateEvent(String nome, String date, User u, String UUID) throws SQLException;
+
+    void deleteEventById(String UUID) throws SQLException;
 
 }

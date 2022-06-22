@@ -37,6 +37,13 @@ public class EventDB implements EventDAO{
     }
 
     @Override
+    public Event selectEventByUUDI(String UUID) throws SQLException{
+        String query = String.format("SELECT idevent, idCalendar, nome, data, iduser, type, event.desc FROM event WHERE idevent = UUID_TO_BIN('%s')", UUID);
+        ResultSet rs = statement.executeQuery(query);
+        return rsToEvent(rs);
+    }
+
+    @Override
     public List<Event> selectAllEventOfSpecifiedMonth(Calendar calendar, int month) throws SQLException {
         String query = String.format("SELECT (idevent), idCalendar, nome, data, iduser, type, event.desc FROM event WHERE idCalendar = %d and month(data) = %d", calendar.getIdCalendar(), month);
         ResultSet rs = statement.executeQuery(query);
@@ -45,7 +52,7 @@ public class EventDB implements EventDAO{
 
     @Override
     public void insertEvent(Calendar cal, String nome, String date, User u, String type, String desc)  throws SQLException{
-        String query = String.format("INSERT INTO event (idevent, idCalendar, nome, data, iduser, type, desc) VALUES (UUID_TO_BIN(UUID()), %d, '%s', '%s', '%s', '%s', '%s')",
+        String query = String.format("INSERT INTO event VALUES (UUID_TO_BIN(UUID()), %d, '%s', '%s', '%s', '%s', '%s')",
                 cal.getIdCalendar(), nome, date, u.getUsername(), type, desc);
         statement.executeUpdate(query);
     }
@@ -72,8 +79,39 @@ public class EventDB implements EventDAO{
     }
 
     @Override
-    public void deleteEventById(byte[] idEvent) {
+    public void updateEvent(String nome, String date, User u, String type, String desc, String UUID) throws SQLException {
+        String query = String.format("UPDATE event SET nome = '%s', data = '%s', iduser = '%s', type = '%s', event.desc = '%s' WHERE idevent = UUID_TO_BIN('%s')",
+                nome, date, u.getUsername(), type, desc, UUID);
+        System.out.println(query);
+        statement.executeUpdate(query);
+    }
 
+    @Override
+    public void updateEventWithType(String nome, String date, User u, String type, String UUID) throws SQLException {
+        String query = String.format("UPDATE event SET nome = '%s', data = '%s', iduser = '%s', type = '%s' WHERE idevent = UUID_TO_BIN('%s')",
+                nome, date, u.getUsername(), type, UUID);
+        statement.executeUpdate(query);
+    }
+
+    @Override
+    public void updateEventWithDesc(String nome, String date, User u, String desc, String UUID) throws SQLException {
+        String query = String.format("UPDATE event SET nome = '%s', data = '%s', iduser = '%s', event.desc = '%s' WHERE idevent = UUID_TO_BIN('%s')",
+                nome, date, u.getUsername(), desc, UUID);
+        statement.executeUpdate(query);
+    }
+
+    @Override
+    public void updateEvent(String nome, String date, User u, String UUID) throws SQLException {
+        String query = String.format("UPDATE event SET nome = '%s', data = '%s', iduser = '%s' WHERE idevent = UUID_TO_BIN('%s')",
+                nome, date, u.getUsername(), UUID);
+        statement.executeUpdate(query);
+    }
+
+    @Override
+    public void deleteEventById(String UUID) throws SQLException {
+        String query = String.format("DELETE FROM event WHERE idevent = UUID_TO_BIN('%s')",
+                UUID);
+        statement.executeUpdate(query);
     }
 
     public List<Event> rsToEventList(ResultSet rs) throws SQLException {
@@ -91,5 +129,21 @@ public class EventDB implements EventDAO{
             eventList.add(e);
         }
         return eventList;
+    }
+
+    public Event rsToEvent(ResultSet rs) throws SQLException {
+        HexFormat hex = HexFormat.of().withLowerCase();
+        if (rs.next()){
+            Event e = new Event(
+                    hex.formatHex(rs.getBytes(1)),
+                    rs.getInt(2),
+                    rs.getString(3),
+                    rs.getString(4),
+                    rs.getString(5),
+                    rs.getString(6),
+                    rs.getString(7));
+            return e;
+        }
+        return null;
     }
 }

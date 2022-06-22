@@ -15,16 +15,9 @@ import org.jdatepicker.impl.UtilDateModel;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.HTMLWriter;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.TextAttribute;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -150,10 +143,12 @@ public class LoginView extends JFrame{
     //private Calendar calendar;
     private int year;
     private int month;
-    private base.Calendar.Calendar c;
+    private base.Calendar.Calendar currCal;
     private boolean first = true;
     private boolean isShow = false;
-    HashMap<String, String> eventSelector = new HashMap();
+    private HashMap<String, String> eventSelector = new HashMap();
+    private boolean updating = false;
+    private String currUUID;
 
     @SneakyThrows
     public LoginView()  {
@@ -423,15 +418,15 @@ public class LoginView extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(!tbCodice.getText().isEmpty() && !tbCalendarPassword.getText().isEmpty()){
-                    c = calendarManager.selectCalendarByID(Integer.valueOf(tbCodice.getText()));
-                    if(c != null){
-                        if(c.getPass().equals(tbCalendarPassword.getText())){
+                    currCal = calendarManager.selectCalendarByID(Integer.valueOf(tbCodice.getText()));
+                    if(currCal != null){
+                        if(currCal.getPass().equals(tbCalendarPassword.getText())){
                             System.out.println("Accesso al calendario");
                             //TODO: se l'utente non ha mai fatto l'accesso a questo calendario, aggiungerlo alla lista
                             //costruisco il calendario
                             calendarSetup();
                             //setto il calendario
-                            initCalendarPanel(currUser, eventManager, c, year, month);
+                            initCalendarPanel(currUser, eventManager, currCal, year, month);
                             mainPanel.removeAll();
                             mainPanel.add(calendarPanel);
                             mainPanel.repaint();
@@ -478,15 +473,65 @@ public class LoginView extends JFrame{
         });
 
         btnConfermaNuovoEvento.addActionListener(new ActionListener() {
+            @SneakyThrows
             @Override
             public void actionPerformed(ActionEvent e) {
+                    boolean done = false;
                     Date d = (Date) (((JDatePickerImpl) DatePickerPanel.getComponent(0)).getModel().getValue());
-                    String newEventDate = new SimpleDateFormat("yyyy-MM-dd 00:00:00").format(d);
-                    System.out.println(newEventDate);
-                    if(!eventName.getText().isEmpty() && !newEventDate.isEmpty()){
-
+                    String newEventDate = new SimpleDateFormat("yyyy-MM-dd").format(d);
+                    //System.out.println(newEventDate);
+                    if(!updating) {
+                        if (!eventName.getText().isEmpty() && !newEventDate.isEmpty() && !eventType.getText().isEmpty() && !eventDesc.getText().isEmpty()) {
+                            eventManager.insertEvent(currCal, eventName.getText(), newEventDate, currUser, eventType.getText(), eventDesc.getText());
+                            done = true;
+                        } else if (!eventName.getText().isEmpty() && !newEventDate.isEmpty() && eventType.getText().isEmpty() && eventDesc.getText().isEmpty()) {
+                            eventManager.insertEvent(currCal, eventName.getText(), newEventDate, currUser);
+                            done = true;
+                        } else if (!eventName.getText().isEmpty() && !newEventDate.isEmpty() && !eventType.getText().isEmpty() && eventDesc.getText().isEmpty()) {
+                            eventManager.insertEventWithType(currCal, eventName.getText(), newEventDate, currUser, eventType.getText());
+                            done = true;
+                        } else if (!eventName.getText().isEmpty() && !newEventDate.isEmpty() && !eventDesc.getText().isEmpty() && eventType.getText().isEmpty()) {
+                            eventManager.insertEventWithDesc(currCal, eventName.getText(), newEventDate, currUser, eventDesc.getText());
+                            done = true;
+                        }
+                        if (done == true) {
+                            calendarSetup();
+                            initCalendarPanel(currUser, eventManager, currCal, year, month);
+                            mainPanel.removeAll();
+                            mainPanel.add(calendarPanel);
+                            mainPanel.repaint();
+                            mainPanel.revalidate();
+                        } else {
+                            //TODO implementare i messaggi di errore
+                        }
                     }
-                    //TODO: confermare evento
+                    else{
+                        if (!eventName.getText().isEmpty() && !newEventDate.isEmpty() && !eventType.getText().isEmpty() && !eventDesc.getText().isEmpty()) {
+                            eventManager.updateEvent(eventName.getText(), newEventDate, currUser, eventType.getText(), eventDesc.getText(), currUUID);
+                            done = true;
+                        } else if (!eventName.getText().isEmpty() && !newEventDate.isEmpty() && eventType.getText().isEmpty() && eventDesc.getText().isEmpty()) {
+                            eventManager.updateEvent(eventName.getText(), newEventDate, currUser, currUUID);
+                            done = true;
+                        } else if (!eventName.getText().isEmpty() && !newEventDate.isEmpty() && !eventType.getText().isEmpty() && eventDesc.getText().isEmpty()) {
+                            eventManager.updateEventWithType(eventName.getText(), newEventDate, currUser, eventType.getText(), currUUID);
+                            done = true;
+                        } else if (!eventName.getText().isEmpty() && !newEventDate.isEmpty() && !eventDesc.getText().isEmpty() && eventType.getText().isEmpty()) {
+                            eventManager.updateEventWithDesc(eventName.getText(), newEventDate, currUser, eventDesc.getText(), currUUID);
+                            done = true;
+                        }
+                        if (done == true) {
+                            calendarSetup();
+                            initCalendarPanel(currUser, eventManager, currCal, year, month);
+                            mainPanel.removeAll();
+                            mainPanel.add(calendarPanel);
+                            mainPanel.repaint();
+                            mainPanel.revalidate();
+                        } else {
+                            //TODO implementare i messaggi di errore
+                        }
+                        updating = false;
+                    }
+
 
             }
         });
@@ -503,7 +548,7 @@ public class LoginView extends JFrame{
                 else{
                     month--;
                 }
-                initCalendarPanel(currUser, eventManager, c, year, month);
+                initCalendarPanel(currUser, eventManager, currCal, year, month);
             }
         });
 
@@ -519,7 +564,7 @@ public class LoginView extends JFrame{
                 else{
                     month++;
                 }
-                initCalendarPanel(currUser, eventManager, c, year, month);
+                initCalendarPanel(currUser, eventManager, currCal, year, month);
             }
         });
 
@@ -736,10 +781,7 @@ public class LoginView extends JFrame{
                         String calendarDate = new SimpleDateFormat("yyyy-MM-dd 00:00:00").format(calendar.getTime());
                         if(e.getDate().equals(calendarDate)){
                             calendarDate = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
-                            //String text = String.format("<font color=#cc0029>'%s'</font> <font color=#ffcc00>'%s'</font>", e.getNome(), calendarDate);
-                            //System.out.println(text);
-                            //model.add(Html.fromHtml(text));
-                            model.addElement(eventSelector.put(e.getNome()+ " " + calendarDate, e.getIdEvent()));
+                            model.addElement(e.getNome()+ " " + calendarDate);
                             eventSelector.put(e.getNome()+ " " + calendarDate, e.getIdEvent());
                         }
                     }
@@ -756,9 +798,13 @@ public class LoginView extends JFrame{
                             if(b == true){
                                 String s = (String) ((JList) e.getSource()).getSelectedValue();
                                 if(s != null){
-                                    System.out.println(eventSelector.get(s));
-                                    ((JList<?>) e.getSource()).clearSelection();
+                                    //System.out.println(eventSelector.get(s));
+
+                                    //((JList<?>) e.getSource()).clearSelection();
+                                    b = false;
                                 }
+                                //((JList<?>) e.getSource()).clearSelection();
+                                b = false;
                                 //System.out.println(s);
                                 //((JList<?>) e.getSource()).clearSelection();
                                 //TODO aggiungere la possibilità di gestire un evento
@@ -766,6 +812,63 @@ public class LoginView extends JFrame{
                                 //System.out.println(((JList<?>) e.getSource()).getSelectedIndex());
                             }
                             else{
+                                String s = (String) ((JList) e.getSource()).getSelectedValue();
+                                if(s != null){
+                                    System.out.println(s);
+                                    JPopupMenu menu = new JPopupMenu();
+                                    JMenuItem update = new JMenuItem("Modifica");
+                                    JMenuItem delete = new JMenuItem("Elimina");
+                                    menu.add(update);
+                                    menu.add(delete);
+                                    int index = ((JList<?>) e.getSource()).getSelectedIndex();
+                                    Rectangle bounds = ((JList<?>) e.getSource()).getCellBounds(index, index);
+                                    Point p = bounds.getLocation();
+                                    menu.show((Component) e.getSource(), p.x, p.y);
+                                    System.out.println(s);
+                                    ((JList<?>) e.getSource()).clearSelection();
+                                    b = true;
+                                    /**
+                                     * listener update
+                                     * */
+                                    update.addActionListener(new ActionListener() {
+                                        @SneakyThrows
+                                        @Override
+                                        public void actionPerformed(ActionEvent e) {
+                                            updating = true;
+                                            Event eventToModify = eventManager.selectEventByUUDI(eventSelector.get(s));
+                                            eventName.setText(eventToModify.getNome());
+                                            if(eventToModify.getType() != null){
+                                                eventType.setText(eventToModify.getType());
+                                            }
+                                            if(eventToModify.getDesc() != null){
+                                                eventDesc.setText(eventToModify.getDesc());
+                                            }
+                                            currUUID = eventSelector.get(s);
+                                            mainPanel.removeAll();
+                                            mainPanel.add(createEvent);
+                                            mainPanel.revalidate();
+                                            mainPanel.repaint();
+                                        }
+                                    });
+
+                                    /***
+                                     * listener delete
+                                     */
+                                    delete.addActionListener(new ActionListener() {
+                                        @SneakyThrows
+                                        @Override
+                                        public void actionPerformed(ActionEvent e) {
+                                            currUUID = eventSelector.get(s);
+                                            eventManager.deleteEventById(currUUID);
+                                            calendarSetup();
+                                            initCalendarPanel(currUser, eventManager, currCal, year, month);
+                                            mainPanel.removeAll();
+                                            mainPanel.add(calendarPanel);
+                                            mainPanel.repaint();
+                                            mainPanel.revalidate();
+                                        }
+                                    });
+                                }
                                 b = true;
                             }
                         }
@@ -801,13 +904,13 @@ public class LoginView extends JFrame{
                     System.out.println(i);
                     first = true;
                     CalendarDB calendarManager = new CalendarDB();
-                    c = calendarManager.selectCalendarByID(i);
+                    currCal = calendarManager.selectCalendarByID(i);
                     System.out.println("Accesso al calendario");
                     //costruisco il calendario
                     calendarSetup();
                     //setto il calendario
                     EventDB eventManager = new EventDB();
-                    initCalendarPanel(currUser, eventManager, c, year, month);
+                    initCalendarPanel(currUser, eventManager, currCal, year, month);
                     mainPanel.removeAll();
                     mainPanel.add(calendarPanel);
                     mainPanel.repaint();
