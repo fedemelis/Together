@@ -1,5 +1,6 @@
 package base.Partecipa;
 
+import base.Calendar.Calendar;
 import base.Event.Event;
 import base.User.User;
 import res.DBManager;
@@ -35,6 +36,13 @@ public class PartecipaDB implements  PartecipaDAO{
     }
 
     @Override
+    public List<Calendar> selectAllCalendarNameForSpecificUser(String user) throws SQLException {
+        String query = String.format("SELECT calendar.* FROM partecipa JOIN calendar on (partecipa.idcalendar = calendar.idcalendar) WHERE idutente = '%s'", user);
+        ResultSet rs = statement.executeQuery(query);
+        return rsToCalendarList(rs);
+    }
+
+    @Override
     public Partecipa selectSpecificCalendarOfSpecificUser(int idCalendar, String user) throws SQLException {
         String query = String.format("SELECT * FROM partecipa WHERE idutente = '%s' and idcalendar = %d", user, idCalendar);
         ResultSet rs = statement.executeQuery(query);
@@ -66,5 +74,18 @@ public class PartecipaDB implements  PartecipaDAO{
             return p;
         }
         return null;
+    }
+
+    public List<Calendar> rsToCalendarList(ResultSet rs) throws SQLException {
+        List<Calendar> calendarList = new ArrayList<Calendar>();
+        while (rs.next()) {
+            Calendar c = new Calendar(
+                    rs.getInt(1),
+                    rs.getString(2),
+                    rs.getString(3),
+                    rs.getString(4));
+            calendarList.add(c);
+        }
+        return calendarList;
     }
 }

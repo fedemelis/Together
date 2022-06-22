@@ -59,21 +59,21 @@ public class EventDB implements EventDAO{
 
     @Override
     public void insertEventWithType(Calendar cal, String nome, String date, User u, String type) throws SQLException{
-        String query = String.format("INSERT INTO event (idevent, idCalendar, nome, data, iduser, type, desc) VALUES(UUID_TO_BIN(UUID()), %d, '%s', '%s', '%s', '%s', NULL)",
+        String query = String.format("INSERT INTO event (idevent, idCalendar, nome, data, iduser, type, event.desc) VALUES(UUID_TO_BIN(UUID()), %d, '%s', '%s', '%s', '%s', NULL)",
                 cal.getIdCalendar(), nome, date, u.getUsername(), type);
         statement.executeUpdate(query);
     }
 
     @Override
     public void insertEventWithDesc(Calendar cal, String nome, String date, User u, String desc) throws SQLException{
-        String query = String.format("INSERT INTO event (idevent, idCalendar, nome, data, iduser, type, desc) VALUES(UUID_TO_BIN(UUID()), %d, '%s', '%s', '%s', NULL, '%s')",
+        String query = String.format("INSERT INTO event (idevent, idCalendar, nome, data, iduser, type, event.desc) VALUES(UUID_TO_BIN(UUID()), %d, '%s', '%s', '%s', NULL, '%s')",
                 cal.getIdCalendar(), nome, date, u.getUsername(), desc);
         statement.executeUpdate(query);
     }
 
     @Override
     public void insertEvent(Calendar cal, String nome, String date, User u) throws SQLException {
-        String query = String.format("INSERT INTO event (idevent, idCalendar, nome, data, iduser, type, desc) VALUES(UUID_TO_BIN(UUID()), %d, '%s', '%s', '%s', NULL, NULL)",
+        String query = String.format("INSERT INTO event (idevent, idCalendar, nome, data, iduser, type, event.desc) VALUES(UUID_TO_BIN(UUID()), %d, '%s', '%s', '%s', NULL, NULL)",
                 cal.getIdCalendar(), nome, date, u.getUsername());
         statement.executeUpdate(query);
     }
