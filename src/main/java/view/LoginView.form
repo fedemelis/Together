@@ -1599,7 +1599,7 @@
           </grid>
         </children>
       </grid>
-      <grid id="2a2b5" binding="loginCalendar" layout-manager="GridLayoutManager" row-count="9" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="2a2b5" binding="loginCalendar" layout-manager="GridLayoutManager" row-count="10" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <card name="Card5"/>
@@ -1611,12 +1611,12 @@
         <children>
           <vspacer id="6fe4f">
             <constraints>
-              <grid row="8" column="1" row-span="1" col-span="2" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+              <grid row="9" column="1" row-span="1" col-span="2" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
           <component id="f208d" class="javax.swing.JPasswordField" binding="tbCalendarPassword">
             <constraints>
-              <grid row="5" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
@@ -1634,15 +1634,15 @@
           </hspacer>
           <component id="51858" class="javax.swing.JButton" binding="btgGoToCalendar">
             <constraints>
-              <grid row="4" column="3" row-span="2" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="3" row-span="3" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Button"/>
+              <text value="Entra"/>
             </properties>
           </component>
           <component id="824b3" class="javax.swing.JLabel" binding="creaCalendario">
             <constraints>
-              <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="7" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <background color="-4473925"/>
@@ -1660,15 +1660,7 @@
           </component>
           <component id="1d0a3" class="javax.swing.JLabel" binding="loginErrorCalendar">
             <constraints>
-              <grid row="7" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value=""/>
-            </properties>
-          </component>
-          <component id="9c7b7" class="javax.swing.JLabel" binding="doUserHasSavedAccount">
-            <constraints>
-              <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="8" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value=""/>
@@ -1679,12 +1671,6 @@
               <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
-          <component id="4c926" class="javax.swing.JList" binding="oldCalendar">
-            <constraints>
-              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties/>
-          </component>
           <component id="6d653" class="javax.swing.JTextField" binding="tbCodice">
             <constraints>
               <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
@@ -1693,7 +1679,41 @@
             </constraints>
             <properties>
               <inheritsPopupMenu value="false"/>
-              <text value="Inserire codice calendario"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="f1b8c" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Codice numerico"/>
+            </properties>
+          </component>
+          <component id="b2076" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Password"/>
+            </properties>
+          </component>
+          <component id="4c926" class="javax.swing.JList" binding="oldCalendar">
+            <constraints>
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="8" fill="2" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <foreground color="-12828863"/>
+            </properties>
+          </component>
+          <component id="9c7b7" class="javax.swing.JLabel" binding="doUserHasSavedAccount">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value=""/>
             </properties>
           </component>
         </children>
@@ -1707,48 +1727,28 @@
         <children>
           <component id="338c" class="javax.swing.JButton" binding="btnCancellaNuovoEvento">
             <constraints>
-              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
+              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="300" bottom="0" right="300" weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="Annulla"/>
             </properties>
           </component>
-          <component id="acb07" class="javax.swing.JTextField" binding="eventType">
-            <constraints>
-              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-              <gridbag top="0" left="10" bottom="0" right="0" weightx="1.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <horizontalAlignment value="0"/>
-            </properties>
-          </component>
           <component id="46ccc" class="javax.swing.JButton" binding="btnConfermaNuovoEvento">
             <constraints>
-              <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
+              <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="300" bottom="0" right="300" weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="Crea"/>
             </properties>
-          </component>
-          <component id="be0fb" class="javax.swing.JTextField" binding="eventName">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-              <gridbag top="0" left="10" bottom="0" right="200" weightx="1.0" weighty="0.0"/>
-            </constraints>
-            <properties/>
           </component>
           <component id="d7f04" class="javax.swing.JTextField" binding="eventDesc">
             <constraints>
               <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
-              <gridbag top="0" left="10" bottom="0" right="0" weightx="1.0" weighty="0.0"/>
+              <gridbag top="0" left="300" bottom="0" right="300" weightx="1.0" weighty="0.0" ipadx="50"/>
             </constraints>
             <properties>
               <horizontalAlignment value="0"/>
@@ -1756,35 +1756,39 @@
           </component>
           <component id="f304d" class="javax.swing.JLabel" binding="labelTitoloEvento">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
+              <horizontalAlignment value="0"/>
               <text value="Titolo *"/>
             </properties>
           </component>
           <component id="bbb9c" class="javax.swing.JLabel" binding="labelTipoEvento">
             <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
+              <horizontalAlignment value="0"/>
+              <horizontalTextPosition value="11"/>
               <text value="Categoria"/>
             </properties>
           </component>
           <component id="75620" class="javax.swing.JLabel" binding="labelDescrizioneEvento">
             <constraints>
-              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
+              <horizontalAlignment value="0"/>
               <text value="Descrizione"/>
             </properties>
           </component>
-          <grid id="6e418" binding="DatePickerPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+          <grid id="6e418" binding="DatePickerPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
             <constraints>
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
+              <gridbag top="0" left="300" bottom="0" right="300" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties/>
             <border type="none"/>
@@ -1792,16 +1796,47 @@
           </grid>
           <component id="69ec3" class="javax.swing.JLabel" binding="labelData">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
+              <horizontalAlignment value="0"/>
               <text value="Data *"/>
+            </properties>
+          </component>
+          <component id="be0fb" class="javax.swing.JTextField" binding="eventName">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+              <gridbag top="0" left="300" bottom="0" right="300" weightx="1.0" weighty="0.0" ipadx="50"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="acb07" class="javax.swing.JTextField" binding="eventType">
+            <constraints>
+              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+              <gridbag top="0" left="300" bottom="0" right="300" weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <horizontalAlignment value="0"/>
+            </properties>
+          </component>
+          <component id="7f81c" class="javax.swing.JLabel" binding="newEventError">
+            <constraints>
+              <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <horizontalAlignment value="0"/>
+              <text value=""/>
             </properties>
           </component>
         </children>
       </grid>
-      <grid id="471ab" binding="createNewCalendar" layout-manager="GridLayoutManager" row-count="9" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="471ab" binding="createNewCalendar" layout-manager="GridLayoutManager" row-count="14" column-count="8" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <card name="Card6"/>
@@ -1811,7 +1846,7 @@
         <children>
           <component id="d8534" class="javax.swing.JTextField" binding="newCalendarCode">
             <constraints>
-              <grid row="1" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="2" column="1" row-span="1" col-span="6" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
@@ -1819,7 +1854,7 @@
           </component>
           <component id="b51c9" class="javax.swing.JTextField" binding="newCalendarName">
             <constraints>
-              <grid row="2" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="4" column="1" row-span="1" col-span="6" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
@@ -1827,7 +1862,7 @@
           </component>
           <component id="57513" class="javax.swing.JPasswordField" binding="newCalendarPass">
             <constraints>
-              <grid row="3" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="6" column="1" row-span="1" col-span="6" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
@@ -1835,7 +1870,7 @@
           </component>
           <component id="3c6dd" class="javax.swing.JPasswordField" binding="newCalendarPassConfirm">
             <constraints>
-              <grid row="4" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="8" column="1" row-span="1" col-span="6" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
@@ -1843,43 +1878,27 @@
           </component>
           <vspacer id="f04c4">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="5" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="1" row-span="1" col-span="6" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
           <hspacer id="ac2ac">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
           <hspacer id="c7daf">
             <constraints>
-              <grid row="2" column="6" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="7" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
           <vspacer id="506f3">
             <constraints>
-              <grid row="8" column="3" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+              <grid row="13" column="3" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
-          <component id="9a52a" class="javax.swing.JButton" binding="undoCreateCalendar">
-            <constraints>
-              <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Annulla"/>
-            </properties>
-          </component>
-          <component id="72f6e" class="javax.swing.JButton" binding="createCalendarConfirm">
-            <constraints>
-              <grid row="6" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Crea"/>
-            </properties>
-          </component>
           <component id="df407" class="javax.swing.JLabel" binding="createCalendarError">
             <constraints>
-              <grid row="7" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="12" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value=""/>
@@ -1887,11 +1906,67 @@
           </component>
           <component id="febe5" class="javax.swing.JTextField" binding="newCalendarDesc">
             <constraints>
-              <grid row="5" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="10" column="1" row-span="1" col-span="6" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
             <properties/>
+          </component>
+          <component id="ebb92" class="javax.swing.JLabel" binding="labelCode">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Codice numerico*"/>
+            </properties>
+          </component>
+          <component id="2720c" class="javax.swing.JLabel" binding="labelCalendarName">
+            <constraints>
+              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Nome *"/>
+            </properties>
+          </component>
+          <component id="9b55e" class="javax.swing.JLabel" binding="labelPasswordCalendar">
+            <constraints>
+              <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Password *"/>
+            </properties>
+          </component>
+          <component id="f58db" class="javax.swing.JLabel" binding="labelConfirmPasswordCalendar">
+            <constraints>
+              <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Ripeti password *"/>
+            </properties>
+          </component>
+          <component id="8dc4c" class="javax.swing.JLabel" binding="labelCalendarDesc">
+            <constraints>
+              <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Descrizione"/>
+            </properties>
+          </component>
+          <component id="9a52a" class="javax.swing.JButton" binding="undoCreateCalendar">
+            <constraints>
+              <grid row="11" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Annulla"/>
+            </properties>
+          </component>
+          <component id="72f6e" class="javax.swing.JButton" binding="createCalendarConfirm">
+            <constraints>
+              <grid row="11" column="2" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Crea"/>
+            </properties>
           </component>
         </children>
       </grid>

@@ -13,6 +13,8 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
@@ -139,6 +141,12 @@ public class LoginView extends JFrame{
     private JPanel DatePickerPanel;
     private JLabel labelData;
     private JButton btnBackToCalendarLogin;
+    private JLabel labelCode;
+    private JLabel labelCalendarName;
+    private JLabel labelPasswordCalendar;
+    private JLabel labelConfirmPasswordCalendar;
+    private JLabel labelCalendarDesc;
+    private JLabel newEventError;
     private ArrayList<User> userList;
     private User currUser;
     //private Calendar calendar;
@@ -167,7 +175,7 @@ public class LoginView extends JFrame{
         //setResizable(false);
         setVisible(true);
         makeHighlighted_HandCursor(creaacc);
-        makeHighlighted_HandCursor(creaCalendario);
+        //makeHighlighted_HandCursor(creaCalendario);
         LocalDate date = LocalDate.now();
         int thisDay = date.getDayOfMonth();
         int thisMonth = date.getMonthValue();
@@ -175,6 +183,7 @@ public class LoginView extends JFrame{
         initCreateEvent(thisYear, thisMonth, thisDay);
         JDatePickerImpl dp = (JDatePickerImpl) DatePickerPanel.getComponent(0);
         dp.getModel().setDate(thisYear, thisMonth-1, thisDay);
+        this.setExtendedState(MAXIMIZED_BOTH);
 
         //usato per le operazioni sul database
         UserDB userManager = new UserDB();
@@ -233,6 +242,7 @@ public class LoginView extends JFrame{
                             mainPanel.add(loginCalendar);
                             mainPanel.repaint();
                             mainPanel.revalidate();
+                            //makeHighlighted_HandCursor(creaCalendario);
 
                         }
                         else {
@@ -439,6 +449,10 @@ public class LoginView extends JFrame{
                     if(currCal != null){
                         if(currCal.getPass().equals(tbCalendarPassword.getText())){
                             System.out.println("Accesso al calendario");
+                            Partecipa p = partecipaManager.selectSpecificCalendarOfSpecificUser(Integer.parseInt(tbCodice.getText()), tbCalendarPassword.getText());
+                            if(p == null){
+                                partecipaManager.insertNewCalendarForSpecificUser(Integer.parseInt(tbCodice.getText()), tbCalendarPassword.getText());
+                            }
                             //TODO: se l'utente non ha mai fatto l'accesso a questo calendario, aggiungerlo alla lista
                             //costruisco il calendario
                             calendarSetup();
@@ -484,8 +498,14 @@ public class LoginView extends JFrame{
                 eventName.setText("");
                 eventType.setText("");
                 eventDesc.setText("");
+                newEventError.setForeground(Color.black);
+                newEventError.setText("");
+                labelTitoloEvento.setForeground(Color.black);
+                eventName.setBorder(BorderFactory.createLineBorder(Color.black));
+                JDatePickerImpl dp = (JDatePickerImpl) DatePickerPanel.getComponent(0);
+                labelData.setForeground(Color.black);
+                dp.setBorder(BorderFactory.createLineBorder(Color.black));
                 mainPanel.removeAll();
-
                 mainPanel.add(calendarPanel);
                 mainPanel.repaint();
                 mainPanel.revalidate();
@@ -498,7 +518,10 @@ public class LoginView extends JFrame{
             public void actionPerformed(ActionEvent e) {
                     boolean done = false;
                     Date d = (Date) (((JDatePickerImpl) DatePickerPanel.getComponent(0)).getModel().getValue());
-                    String newEventDate = new SimpleDateFormat("yyyy-MM-dd").format(d);
+                    String newEventDate = "";
+                    if(d != null) {
+                        newEventDate = new SimpleDateFormat("yyyy-MM-dd").format(d);
+                    }
                     //System.out.println(newEventDate);
                     if(!updating) {
                         if (!eventName.getText().isEmpty() && !newEventDate.isEmpty() && !eventType.getText().isEmpty() && !eventDesc.getText().isEmpty()) {
@@ -522,7 +545,13 @@ public class LoginView extends JFrame{
                             mainPanel.repaint();
                             mainPanel.revalidate();
                         } else {
-                            //TODO implementare i messaggi di errore
+                            newEventError.setForeground(Color.red);
+                            newEventError.setText("Compila tutti i campi obbligatori");
+                            labelTitoloEvento.setForeground(Color.red);
+                            eventName.setBorder(BorderFactory.createLineBorder(Color.red));
+                            JDatePickerImpl dp = (JDatePickerImpl) DatePickerPanel.getComponent(0);
+                            labelData.setForeground(Color.red);
+                            dp.setBorder(BorderFactory.createLineBorder(Color.red));
                         }
                     }
                     else{
@@ -547,7 +576,13 @@ public class LoginView extends JFrame{
                             mainPanel.repaint();
                             mainPanel.revalidate();
                         } else {
-                            //TODO implementare i messaggi di errore
+                            newEventError.setForeground(Color.red);
+                            newEventError.setText("Compila tutti i campi obbligatori");
+                            labelTitoloEvento.setForeground(Color.red);
+                            eventName.setBorder(BorderFactory.createLineBorder(Color.red));
+                            JDatePickerImpl dp = (JDatePickerImpl) DatePickerPanel.getComponent(0);
+                            labelData.setForeground(Color.red);
+                            dp.setBorder(BorderFactory.createLineBorder(Color.red));
                         }
                         updating = false;
                     }
@@ -556,6 +591,23 @@ public class LoginView extends JFrame{
                     eventDesc.setText("");
                     JDatePickerImpl dp = (JDatePickerImpl) DatePickerPanel.getComponent(0);
                     dp.getModel().setDate(year, month-1, day);
+
+                    dp.getModel().addChangeListener(new ChangeListener() {
+                    @Override
+                    public void stateChanged(ChangeEvent e) {
+                        labelData.setForeground(Color.black);
+                        dp.setBorder(BorderFactory.createLineBorder(Color.black));
+                    }
+                });
+            }
+        });
+
+        eventName.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                labelTitoloEvento.setForeground(Color.black);
+                eventName.setBorder(BorderFactory.createLineBorder(Color.black));
             }
         });
 
@@ -914,7 +966,7 @@ public class LoginView extends JFrame{
     public void initLoginCalendar(User u, PartecipaDB partecipaManager){
         makeHighlighted_HandCursor(creaCalendario);
         currentUser.setText(u.getUsername());
-        setPlaceHolder(tbCodice, "Inserire codice calendario");
+        //setPlaceHolder(tbCodice, "Inserire codice calendario");
         DefaultListModel model = new DefaultListModel();
         List<base.Calendar.Calendar> calendarList;
         calendarList = partecipaManager.selectAllCalendarNameForSpecificUser(u.getUsername());
@@ -986,9 +1038,6 @@ public class LoginView extends JFrame{
         DatePickerPanel.add(datePicker);
         mainPanel.revalidate();
         mainPanel.repaint();
-
-
-
     }
 
     /**
@@ -1002,6 +1051,4 @@ public class LoginView extends JFrame{
         year = date.getYear();
         month = date.getMonthValue();
     }
-
-
 }
