@@ -28,7 +28,6 @@ import java.util.*;
 import java.util.List;
 
 
-
 public class LoginView extends JFrame{
     private JPanel mainPanel;
     private JPanel loginPanel;
@@ -147,6 +146,7 @@ public class LoginView extends JFrame{
     private JLabel labelConfirmPasswordCalendar;
     private JLabel labelCalendarDesc;
     private JLabel newEventError;
+    private JButton backToUserLogin;
     private ArrayList<User> userList;
     private User currUser;
     //private Calendar calendar;
@@ -162,9 +162,8 @@ public class LoginView extends JFrame{
 
     @SneakyThrows
     public LoginView()  {
-
-
         super("Together");
+
         setContentPane(mainPanel);
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
         // width will store the width of the screen
@@ -175,7 +174,7 @@ public class LoginView extends JFrame{
         //setResizable(false);
         setVisible(true);
         makeHighlighted_HandCursor(creaacc);
-        //makeHighlighted_HandCursor(creaCalendario);
+        makeHighlighted_HandCursor(creaCalendario);
         LocalDate date = LocalDate.now();
         int thisDay = date.getDayOfMonth();
         int thisMonth = date.getMonthValue();
@@ -185,20 +184,58 @@ public class LoginView extends JFrame{
         dp.getModel().setDate(thisYear, thisMonth-1, thisDay);
         this.setExtendedState(MAXIMIZED_BOTH);
 
+        creaCalendario.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                creaCalendario.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                creaCalendario.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            }
+
+        });
+
+
         //usato per le operazioni sul database
         UserDB userManager = new UserDB();
         CalendarDB calendarManager = new CalendarDB();
         EventDB eventManager = new EventDB();
         PartecipaDB partecipaManager = new PartecipaDB();
 
-        /*addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER){
-                    System.out.println("Hello");
-                }
-            }
-        });*/
+        showPass.setSize(20, 20);
+        indietro.setSize(40, 40);
+        avanti.setSize(40, 40);
+
+        ImageIcon eyeIcon = new ImageIcon("C:\\Users\\fedem\\IdeaProjects\\togetherUltimate\\src\\main\\java\\res\\visibility.png");
+        Image img = eyeIcon.getImage() ;
+        Image newimg = img.getScaledInstance( showPass.getWidth(), showPass.getHeight(),  java.awt.Image.SCALE_SMOOTH );
+        eyeIcon = new ImageIcon(newimg);
+        showPass.setIcon(eyeIcon);
+
+        ImageIcon addIcon = new ImageIcon("C:\\Users\\fedem\\IdeaProjects\\togetherUltimate\\src\\main\\java\\res\\plus.png");
+        Image imgAdd = addIcon.getImage();
+        Image newimgAdd = imgAdd.getScaledInstance( addEvent.getWidth() / 2, addEvent.getWidth() / 2,  java.awt.Image.SCALE_SMOOTH );
+        addIcon = new ImageIcon(newimgAdd);
+        addEvent.setIcon(addIcon);
+
+        ImageIcon rightIcon = new ImageIcon("C:\\Users\\fedem\\IdeaProjects\\togetherUltimate\\src\\main\\java\\res\\next.png");
+        Image imgRight = rightIcon.getImage();
+        Image newimgRight = imgRight.getScaledInstance( avanti.getWidth(), avanti.getHeight(),  java.awt.Image.SCALE_SMOOTH );
+        rightIcon = new ImageIcon(newimgRight);
+        avanti.setIcon(rightIcon);
+
+        ImageIcon leftIcon = new ImageIcon("C:\\Users\\fedem\\IdeaProjects\\togetherUltimate\\src\\main\\java\\res\\left.png");
+        Image imgLeft = leftIcon.getImage();
+        Image newimgLeft = imgLeft.getScaledInstance( indietro.getWidth(), indietro.getHeight(),  java.awt.Image.SCALE_SMOOTH );
+        leftIcon = new ImageIcon(newimgLeft);
+        indietro.setIcon(leftIcon);
+
+        //initFirebase();
+
 
         /**
          * porta alla creazione di un nuovo utente
@@ -242,7 +279,10 @@ public class LoginView extends JFrame{
                             mainPanel.add(loginCalendar);
                             mainPanel.repaint();
                             mainPanel.revalidate();
-                            //makeHighlighted_HandCursor(creaCalendario);
+                            tbUser.setText("");
+                            tbPassword.setText("");
+                            tbPassword.setEchoChar('•');
+                            //Highlighted_HandCursor(creaCalendario);
 
                         }
                         else {
@@ -449,9 +489,10 @@ public class LoginView extends JFrame{
                     if(currCal != null){
                         if(currCal.getPass().equals(tbCalendarPassword.getText())){
                             System.out.println("Accesso al calendario");
-                            Partecipa p = partecipaManager.selectSpecificCalendarOfSpecificUser(Integer.parseInt(tbCodice.getText()), tbCalendarPassword.getText());
+                            Partecipa p = partecipaManager.selectSpecificCalendarOfSpecificUser(Integer.parseInt(tbCodice.getText()), currUser.getUsername());
+                            System.out.println(p);
                             if(p == null){
-                                partecipaManager.insertNewCalendarForSpecificUser(Integer.parseInt(tbCodice.getText()), tbCalendarPassword.getText());
+                                partecipaManager.insertNewCalendarForSpecificUser(Integer.parseInt(tbCodice.getText()), currUser.getUsername());
                             }
                             //TODO: se l'utente non ha mai fatto l'accesso a questo calendario, aggiungerlo alla lista
                             //costruisco il calendario
@@ -462,6 +503,8 @@ public class LoginView extends JFrame{
                             mainPanel.add(calendarPanel);
                             mainPanel.repaint();
                             mainPanel.revalidate();
+                            tbCodice.setText("");
+                            tbCalendarPassword.setText("");
                         }
                         else{
                             loginErrorCalendar.setText("Password errata");
@@ -647,6 +690,7 @@ public class LoginView extends JFrame{
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                System.out.println("click");
                 mainPanel.removeAll();
                 mainPanel.add(createNewCalendar);
                 mainPanel.repaint();
@@ -692,10 +736,22 @@ public class LoginView extends JFrame{
                         if(c == null){
                             if(newCalendarDesc.getText().isEmpty()){
                                 calendarManager.insertCalendar(Integer.parseInt(newCalendarCode.getText()), newCalendarName.getText(), newCalendarPass.getText());
+                                partecipaManager.insertNewCalendarForSpecificUser(Integer.parseInt(newCalendarCode.getText()), currUser.getUsername());
                             }
                             else{
                                 calendarManager.insertCalendar(Integer.parseInt(newCalendarCode.getText()), newCalendarName.getText(), newCalendarPass.getText(), newCalendarDesc.getText());
+                                partecipaManager.insertNewCalendarForSpecificUser(Integer.parseInt(newCalendarCode.getText()), currUser.getUsername());
                             }
+                            //initLoginCalendar(currUser, partecipaManager);
+                            newCalendarCode.setText("");
+                            newCalendarName.setText("");
+                            newCalendarPass.setText("");
+                            newCalendarPassConfirm.setText("");
+                            newCalendarDesc.setText("");
+                            mainPanel.removeAll();
+                            mainPanel.add(loginCalendar);
+                            mainPanel.repaint();
+                            mainPanel.revalidate();
                         }
                         else{
                             createCalendarError.setText("Esiste già un calendario con lo stesso codice");
@@ -751,6 +807,25 @@ public class LoginView extends JFrame{
                 tbConfirmPasword.setBorder(BorderFactory.createLineBorder(Color.black));
             }
         });
+
+        btnBackToCalendarLogin.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mainPanel.removeAll();
+                mainPanel.add(loginCalendar);
+                mainPanel.repaint();
+                mainPanel.revalidate();
+            }
+        });
+        backToUserLogin.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mainPanel.removeAll();
+                mainPanel.add(loginPanel);
+                mainPanel.repaint();
+                mainPanel.revalidate();
+            }
+        });
     }
 
     /**
@@ -791,7 +866,9 @@ public class LoginView extends JFrame{
         });
     }
 
+    @SneakyThrows
     public static void main(String[] args) {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         SwingUtilities.invokeLater(LoginView::new);
     }
 
@@ -964,15 +1041,17 @@ public class LoginView extends JFrame{
      */
     @SneakyThrows
     public void initLoginCalendar(User u, PartecipaDB partecipaManager){
-        makeHighlighted_HandCursor(creaCalendario);
+        //makeHighlighted_HandCursor(creaCalendario);
         currentUser.setText(u.getUsername());
         //setPlaceHolder(tbCodice, "Inserire codice calendario");
         DefaultListModel model = new DefaultListModel();
         List<base.Calendar.Calendar> calendarList;
         calendarList = partecipaManager.selectAllCalendarNameForSpecificUser(u.getUsername());
         for(base.Calendar.Calendar c : calendarList){
-            doUserHasSavedAccount.setText("Calendari salvati:");
+            doUserHasSavedAccount.setText("I tuoi calendari");
+            doUserHasSavedAccount.setFont(new Font("SansSerif", Font.PLAIN, 20));
             model.addElement(c.getNome() + " (" + c.getIdCalendar() + ")");
+
         }
         oldCalendar.addListSelectionListener(new ListSelectionListener() {
             @SneakyThrows
@@ -996,6 +1075,7 @@ public class LoginView extends JFrame{
                     mainPanel.add(calendarPanel);
                     mainPanel.repaint();
                     mainPanel.revalidate();
+                    //((JList) e.getSource()).clearSelection();
                 }
                 else {
                     first = false;

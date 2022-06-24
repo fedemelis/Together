@@ -51,7 +51,7 @@ public class PartecipaDB implements  PartecipaDAO{
 
     @Override
     public void insertNewCalendarForSpecificUser(int idCalendar, String user) throws SQLException {
-        String query = String.format("INSERT INTO user VALUES ('%s', %d)", user, idCalendar);
+        String query = String.format("INSERT INTO partecipa VALUES ('%s', %d)", user, idCalendar);
         statement.executeUpdate(query);
     }
 
