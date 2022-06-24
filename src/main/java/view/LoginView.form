@@ -113,7 +113,7 @@
             </constraints>
             <properties>
               <borderPainted value="false"/>
-              <contentAreaFilled value="false"/>
+              <contentAreaFilled value="true"/>
               <focusPainted value="false"/>
               <horizontalAlignment value="2"/>
               <horizontalTextPosition value="2"/>
@@ -1754,8 +1754,8 @@
         <children>
           <component id="338c" class="javax.swing.JButton" binding="btnCancellaNuovoEvento">
             <constraints>
-              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag top="0" left="300" bottom="0" right="300" weightx="1.0" weighty="0.0"/>
+              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="500" bottom="0" right="500" weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="Annulla"/>
@@ -1763,8 +1763,8 @@
           </component>
           <component id="46ccc" class="javax.swing.JButton" binding="btnConfermaNuovoEvento">
             <constraints>
-              <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag top="0" left="300" bottom="0" right="300" weightx="1.0" weighty="0.0"/>
+              <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag top="0" left="500" bottom="0" right="500" weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="Crea"/>
@@ -1775,7 +1775,7 @@
               <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
-              <gridbag top="0" left="300" bottom="0" right="300" weightx="1.0" weighty="0.0" ipadx="50"/>
+              <gridbag top="0" left="500" bottom="0" right="500" weightx="1.0" weighty="0.0" ipadx="50"/>
             </constraints>
             <properties>
               <horizontalAlignment value="0"/>
@@ -1836,7 +1836,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
-              <gridbag top="0" left="300" bottom="0" right="300" weightx="1.0" weighty="0.0" ipadx="50"/>
+              <gridbag top="0" left="500" bottom="0" right="500" weightx="1.0" weighty="0.0" ipadx="50"/>
             </constraints>
             <properties/>
           </component>
@@ -1845,7 +1845,7 @@
               <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
-              <gridbag top="0" left="300" bottom="0" right="300" weightx="0.0" weighty="0.0"/>
+              <gridbag top="0" left="500" bottom="0" right="500" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
               <horizontalAlignment value="0"/>

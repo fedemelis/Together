@@ -13,6 +13,7 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -26,7 +27,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
-
+import java.util.regex.Pattern;
 
 public class LoginView extends JFrame{
     private JPanel mainPanel;
@@ -184,6 +185,8 @@ public class LoginView extends JFrame{
         dp.getModel().setDate(thisYear, thisMonth-1, thisDay);
         this.setExtendedState(MAXIMIZED_BOTH);
 
+        Border standardBorder = tbUser.getBorder();
+
         creaCalendario.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -251,79 +254,102 @@ public class LoginView extends JFrame{
                 tbUser.setText("");
                 tbPassword.setText("");
                 errorLabel.setText("");
-                tbPassword.setBorder(BorderFactory.createLineBorder(Color.black));
-                tbUser.setBorder(BorderFactory.createLineBorder(Color.black));
+                tbPassword.setBorder(standardBorder);
+                tbUser.setBorder(standardBorder);
                 isShow = false;
                 tbPassword.setEchoChar('•');
             }
         });
 
-        /**
-         * esegue il login per un utente
-         */
-        btnEntra.addActionListener(new ActionListener() {
-            @SneakyThrows
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!tbUser.getText().isEmpty() && !tbPassword.getText().isEmpty()){
-                    User u = userManager.selectUserByUsername(tbUser.getText());
-                    if(u != null){
-                        if (u.getPassword().equals(tbPassword.getText())) {
-                            System.out.println("ACCESSO ESEGUITO");
-                            currUser = new User(tbUser.getText());
-                            errorLabel.setText("");
-                            tbPassword.setBorder(BorderFactory.createLineBorder(Color.black));
-                            tbUser.setBorder(BorderFactory.createLineBorder(Color.black));
-                            initLoginCalendar(currUser, partecipaManager);
-                            mainPanel.removeAll();
-                            mainPanel.add(loginCalendar);
-                            mainPanel.repaint();
-                            mainPanel.revalidate();
-                            tbUser.setText("");
-                            tbPassword.setText("");
-                            tbPassword.setEchoChar('•');
-                            //Highlighted_HandCursor(creaCalendario);
+        showPass.addMouseListener(new MouseAdapter() {
 
-                        }
-                        else {
-                            if(Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK)){
-                                errorLabel.setText("Username o password errati, prova a distattivare il caps lock");
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                showPass.setBackground(new Color(187, 187, 187));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                showPass.setBackground(new Color(240, 240, 240));
+            }
+        });
+
+        creaCalendario.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            }
+        });
+
+
+
+                /**
+                 * esegue il login per un utente
+                 */
+                btnEntra.addActionListener(new ActionListener() {
+                    @SneakyThrows
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (!tbUser.getText().isEmpty() && !tbPassword.getText().isEmpty()) {
+                            User u = userManager.selectUserByUsername(tbUser.getText());
+                            if (u != null) {
+                                if (u.getPassword().equals(tbPassword.getText())) {
+                                    System.out.println("ACCESSO ESEGUITO");
+                                    currUser = new User(tbUser.getText());
+                                    errorLabel.setText("");
+                                    tbPassword.setBorder(standardBorder);
+                                    tbUser.setBorder(standardBorder);
+                                    initLoginCalendar(currUser, partecipaManager, standardBorder);
+                                    mainPanel.removeAll();
+                                    mainPanel.add(loginCalendar);
+                                    mainPanel.repaint();
+                                    mainPanel.revalidate();
+                                    tbUser.setText("");
+                                    tbPassword.setText("");
+                                    tbPassword.setEchoChar('•');
+                                    //Highlighted_HandCursor(creaCalendario);
+
+                                } else {
+                                    if (Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK)) {
+                                        errorLabel.setText("Username o password errati, prova a distattivare il caps lock");
+                                    } else {
+                                        errorLabel.setText("Username o password errati");
+                                    }
+                                    errorLabel.setForeground(Color.red);
+                                    tbPassword.setBorder(BorderFactory.createLineBorder(Color.red));
+                                    tbUser.setBorder(BorderFactory.createLineBorder(Color.red));
+
+                                }
+                            } else {
+                                if (Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK)) {
+                                    errorLabel.setText("Username o password errati, prova a distattivare il caps lock");
+                                } else {
+                                    errorLabel.setText("Username o password errati");
+                                }
+                                errorLabel.setForeground(Color.red);
+                                tbPassword.setBorder(BorderFactory.createLineBorder(Color.red));
+                                tbUser.setBorder(BorderFactory.createLineBorder(Color.red));
                             }
-                            else {
-                                errorLabel.setText("Username o password errati");
-                            }
+                        } else {
+                            errorLabel.setText("Compila tutti i campi");
                             errorLabel.setForeground(Color.red);
                             tbPassword.setBorder(BorderFactory.createLineBorder(Color.red));
                             tbUser.setBorder(BorderFactory.createLineBorder(Color.red));
-
                         }
                     }
-                    else {
-                        if(Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK)){
-                            errorLabel.setText("Username o password errati, prova a distattivare il caps lock");
-                        }
-                        else {
-                            errorLabel.setText("Username o password errati");
-                        }
-                        errorLabel.setForeground(Color.red);
-                        tbPassword.setBorder(BorderFactory.createLineBorder(Color.red));
-                        tbUser.setBorder(BorderFactory.createLineBorder(Color.red));
-                    }
-                }
-                else {
-                    errorLabel.setText("Compila tutti i campi");
-                    errorLabel.setForeground(Color.red);
-                    tbPassword.setBorder(BorderFactory.createLineBorder(Color.red));
-                    tbUser.setBorder(BorderFactory.createLineBorder(Color.red));
-                }
-            }
-        });
+                });
 
         tbUser.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
                 super.keyTyped(e);
-                tbUser.setBorder(BorderFactory.createLineBorder(Color.black));
+                tbUser.setBorder(standardBorder);
                 errorLabel.setText("");
             }
         });
@@ -331,7 +357,7 @@ public class LoginView extends JFrame{
             @Override
             public void keyTyped(KeyEvent e) {
                 super.keyTyped(e);
-                tbPassword.setBorder(BorderFactory.createLineBorder(Color.black));
+                tbPassword.setBorder(standardBorder);
                 errorLabel.setText("");
             }
         });
@@ -343,37 +369,63 @@ public class LoginView extends JFrame{
             @SneakyThrows
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println("Entrato");
                 if(!tbNome.getText().isEmpty() && !tbCognome.getText().isEmpty() && !tbUsername.getText().isEmpty() && !tbEmail.getText().isEmpty() && !tbNewAccountPassword.getText().isEmpty() && !tbConfirmPasword.getText().isEmpty()) {
+                    System.out.println("Entrato2");
                     if(!tbNome.getText().isEmpty()){
                         labelNome.setForeground(Color.black);
-                        tbNome.setBorder(BorderFactory.createLineBorder(Color.black));
+                        tbNome.setBorder(standardBorder);
                     }
                     if(!tbCognome.getText().isEmpty()){
                         labelCognome.setForeground(Color.black);
-                        tbCognome.setBorder(BorderFactory.createLineBorder(Color.black));
+                        tbCognome.setBorder(standardBorder);
                     }
                     if(!tbUsername.getText().isEmpty()){
                         labelUsername.setForeground(Color.black);
-                        tbUsername.setBorder(BorderFactory.createLineBorder(Color.black));
+                        tbUsername.setBorder(standardBorder);
                     }
                     if(!tbEmail.getText().isEmpty()){
                         labelEmail.setForeground(Color.black);
-                        tbEmail.setBorder(BorderFactory.createLineBorder(Color.black));
+                        tbEmail.setBorder(standardBorder);
                     }
                     if(!tbNewAccountPassword.getText().isEmpty()){
                         labelPassword.setForeground(Color.black);
-                        tbNewAccountPassword.setBorder(BorderFactory.createLineBorder(Color.black));
+                        tbNewAccountPassword.setBorder(standardBorder);
                     }
                     if(!tbConfirmPasword.getText().isEmpty()){
                         labelConfirmPassword.setForeground(Color.black);
-                        tbConfirmPasword.setBorder(BorderFactory.createLineBorder(Color.black));
+                        tbConfirmPasword.setBorder(standardBorder);
                     }
-                    if (!tbNewAccountPassword.getText().equals(tbConfirmPasword.getText())) {
-                        userManager.insertUser(tbUsername.getText(), tbConfirmPasword.getText(), tbNome.getText(), tbCognome.getText(), tbEmail.getText());
-                        mainPanel.removeAll();
-                        mainPanel.add(loginPanel);
-                        mainPanel.repaint();
-                        mainPanel.revalidate();
+                    if (tbNewAccountPassword.getText().equals(tbConfirmPasword.getText())) {
+                        if(!isValidMail(tbEmail.getText())){
+                            passErrLabel.setText("Mail non valida");
+                            passErrLabel.setForeground(Color.red);
+                            tbEmail.setBorder(BorderFactory.createLineBorder(Color.red));
+                        }
+                        else{
+                            User u = userManager.selectUserByUsername(tbUsername.getText());
+                            if(u == null){
+                                System.out.println("inserito");
+                                userManager.insertUser(tbUsername.getText(), tbConfirmPasword.getText(), tbNome.getText(), tbCognome.getText(), tbEmail.getText());
+                                tbUser.setText(tbUsername.getText());
+                                tbPassword.setText(tbNewAccountPassword.getText());
+                                tbUsername.setText("");
+                                tbNome.setText("");
+                                tbCognome.setText("");
+                                tbNewAccountPassword.setText("");
+                                tbConfirmPasword.setText("");
+                                tbEmail.setText("");
+                                mainPanel.removeAll();
+                                mainPanel.add(loginPanel);
+                                mainPanel.repaint();
+                                mainPanel.revalidate();
+                            }
+                            else{
+                                passErrLabel.setText("Nome utente non disponibile");
+                                passErrLabel.setForeground(Color.red);
+                                tbUsername.setBorder(BorderFactory.createLineBorder(Color.red));
+                            }
+                        }
                     }
                 }
                 else{
@@ -413,7 +465,7 @@ public class LoginView extends JFrame{
             public void keyTyped(KeyEvent e) {
                 super.keyTyped(e);
                 labelNome.setForeground(Color.black);
-                tbNome.setBorder(BorderFactory.createLineBorder(Color.black));
+                tbNome.setBorder(standardBorder);
             }
         });
         tbCognome.addKeyListener(new KeyAdapter() {
@@ -421,7 +473,7 @@ public class LoginView extends JFrame{
             public void keyTyped(KeyEvent e) {
                 super.keyTyped(e);
                 labelCognome.setForeground(Color.black);
-                tbCognome.setBorder(BorderFactory.createLineBorder(Color.black));
+                tbCognome.setBorder(standardBorder);
             }
         });
         tbUsername.addKeyListener(new KeyAdapter() {
@@ -429,7 +481,7 @@ public class LoginView extends JFrame{
             public void keyTyped(KeyEvent e) {
                 super.keyTyped(e);
                 labelUsername.setForeground(Color.black);
-                tbUsername.setBorder(BorderFactory.createLineBorder(Color.black));
+                tbUsername.setBorder(standardBorder);
             }
         });
         tbEmail.addKeyListener(new KeyAdapter() {
@@ -437,7 +489,7 @@ public class LoginView extends JFrame{
             public void keyTyped(KeyEvent e) {
                 super.keyTyped(e);
                 labelEmail.setForeground(Color.black);
-                tbEmail.setBorder(BorderFactory.createLineBorder(Color.black));
+                tbEmail.setBorder(standardBorder);
             }
         });
         tbNewAccountPassword.addKeyListener(new KeyAdapter() {
@@ -445,7 +497,7 @@ public class LoginView extends JFrame{
             public void keyTyped(KeyEvent e) {
                 super.keyTyped(e);
                 labelPassword.setForeground(Color.black);
-                tbNewAccountPassword.setBorder(BorderFactory.createLineBorder(Color.black));
+                tbNewAccountPassword.setBorder(standardBorder);
             }
         });
         tbConfirmPasword.addKeyListener(new KeyAdapter() {
@@ -453,7 +505,7 @@ public class LoginView extends JFrame{
             public void keyTyped(KeyEvent e) {
                 super.keyTyped(e);
                 labelConfirmPassword.setForeground(Color.black);
-                tbConfirmPasword.setBorder(BorderFactory.createLineBorder(Color.black));
+                tbConfirmPasword.setBorder(standardBorder);
             }
         });
 
@@ -498,7 +550,7 @@ public class LoginView extends JFrame{
                             //costruisco il calendario
                             calendarSetup();
                             //setto il calendario
-                            initCalendarPanel(currUser, eventManager, currCal, year, month);
+                            initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
                             mainPanel.removeAll();
                             mainPanel.add(calendarPanel);
                             mainPanel.repaint();
@@ -544,10 +596,10 @@ public class LoginView extends JFrame{
                 newEventError.setForeground(Color.black);
                 newEventError.setText("");
                 labelTitoloEvento.setForeground(Color.black);
-                eventName.setBorder(BorderFactory.createLineBorder(Color.black));
+                eventName.setBorder(standardBorder);
                 JDatePickerImpl dp = (JDatePickerImpl) DatePickerPanel.getComponent(0);
                 labelData.setForeground(Color.black);
-                dp.setBorder(BorderFactory.createLineBorder(Color.black));
+                dp.setBorder(standardBorder);
                 mainPanel.removeAll();
                 mainPanel.add(calendarPanel);
                 mainPanel.repaint();
@@ -582,7 +634,7 @@ public class LoginView extends JFrame{
                         }
                         if (done == true) {
                             calendarSetup();
-                            initCalendarPanel(currUser, eventManager, currCal, year, month);
+                            initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
                             mainPanel.removeAll();
                             mainPanel.add(calendarPanel);
                             mainPanel.repaint();
@@ -613,7 +665,7 @@ public class LoginView extends JFrame{
                         }
                         if (done == true) {
                             calendarSetup();
-                            initCalendarPanel(currUser, eventManager, currCal, year, month);
+                            initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
                             mainPanel.removeAll();
                             mainPanel.add(calendarPanel);
                             mainPanel.repaint();
@@ -639,7 +691,7 @@ public class LoginView extends JFrame{
                     @Override
                     public void stateChanged(ChangeEvent e) {
                         labelData.setForeground(Color.black);
-                        dp.setBorder(BorderFactory.createLineBorder(Color.black));
+                        dp.setBorder(standardBorder);
                     }
                 });
             }
@@ -650,7 +702,7 @@ public class LoginView extends JFrame{
             public void keyTyped(KeyEvent e) {
                 super.keyTyped(e);
                 labelTitoloEvento.setForeground(Color.black);
-                eventName.setBorder(BorderFactory.createLineBorder(Color.black));
+                eventName.setBorder(standardBorder);
             }
         });
 
@@ -666,7 +718,7 @@ public class LoginView extends JFrame{
                 else{
                     month--;
                 }
-                initCalendarPanel(currUser, eventManager, currCal, year, month);
+                initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
             }
         });
 
@@ -682,7 +734,7 @@ public class LoginView extends JFrame{
                 else{
                     month++;
                 }
-                initCalendarPanel(currUser, eventManager, currCal, year, month);
+                initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
             }
         });
 
@@ -691,6 +743,7 @@ public class LoginView extends JFrame{
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 System.out.println("click");
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 mainPanel.removeAll();
                 mainPanel.add(createNewCalendar);
                 mainPanel.repaint();
@@ -730,8 +783,17 @@ public class LoginView extends JFrame{
             @SneakyThrows
             @Override
             public void actionPerformed(ActionEvent e) {
+                boolean numeric = true;
                 if(!newCalendarCode.getText().isEmpty() && !newCalendarName.getText().isEmpty() && !newCalendarPass.getText().isEmpty() && !newCalendarPassConfirm.getText().isEmpty()){
-                    if(newCalendarPass.getText().equals(newCalendarPassConfirm.getText())) {
+                    try {
+                        int n = Integer.parseInt(newCalendarCode.getText());
+                    }
+                    catch (NumberFormatException e1){
+                        createCalendarError.setText("Inserisci un codice numerico");
+                        createCalendarError.setForeground(Color.red);
+                        numeric = false;
+                    }
+                    if(newCalendarPass.getText().equals(newCalendarPassConfirm.getText()) && numeric) {
                         base.Calendar.Calendar c = calendarManager.selectCalendarByID(Integer.parseInt(newCalendarCode.getText()));
                         if(c == null){
                             if(newCalendarDesc.getText().isEmpty()){
@@ -742,12 +804,13 @@ public class LoginView extends JFrame{
                                 calendarManager.insertCalendar(Integer.parseInt(newCalendarCode.getText()), newCalendarName.getText(), newCalendarPass.getText(), newCalendarDesc.getText());
                                 partecipaManager.insertNewCalendarForSpecificUser(Integer.parseInt(newCalendarCode.getText()), currUser.getUsername());
                             }
-                            //initLoginCalendar(currUser, partecipaManager);
+                            initLoginCalendar(currUser, partecipaManager, standardBorder);
                             newCalendarCode.setText("");
                             newCalendarName.setText("");
                             newCalendarPass.setText("");
                             newCalendarPassConfirm.setText("");
                             newCalendarDesc.setText("");
+                            createCalendarError.setText("");
                             mainPanel.removeAll();
                             mainPanel.add(loginCalendar);
                             mainPanel.repaint();
@@ -794,17 +857,17 @@ public class LoginView extends JFrame{
                 tbNewAccountPassword.setText("");
                 tbConfirmPasword.setText("");
                 labelNome.setForeground(Color.black);
-                tbNome.setBorder(BorderFactory.createLineBorder(Color.black));
+                tbNome.setBorder(standardBorder);
                 labelCognome.setForeground(Color.black);
-                tbCognome.setBorder(BorderFactory.createLineBorder(Color.black));
+                tbCognome.setBorder(standardBorder);
                 labelUsername.setForeground(Color.black);
-                tbUsername.setBorder(BorderFactory.createLineBorder(Color.black));
+                tbUsername.setBorder(standardBorder);
                 labelEmail.setForeground(Color.black);
-                tbEmail.setBorder(BorderFactory.createLineBorder(Color.black));
+                tbEmail.setBorder(standardBorder);
                 labelPassword.setForeground(Color.black);
-                tbNewAccountPassword.setBorder(BorderFactory.createLineBorder(Color.black));
+                tbNewAccountPassword.setBorder(standardBorder);
                 labelConfirmPassword.setForeground(Color.black);
-                tbConfirmPasword.setBorder(BorderFactory.createLineBorder(Color.black));
+                tbConfirmPasword.setBorder(standardBorder);
             }
         });
 
@@ -875,7 +938,7 @@ public class LoginView extends JFrame{
     /**
      * inizializza il calendario
      */
-    public void initCalendarPanel(User currUser, EventDB eventManager, base.Calendar.Calendar currentCalendar, int year, int month) throws SQLException {
+    public void initCalendarPanel(User currUser, EventDB eventManager, base.Calendar.Calendar currentCalendar, int year, int month, Border standardBorder) throws SQLException {
         /*lista per i valori da escludere nei for*/
         //List<String> dName = new ArrayList<>(Arrays.asList("Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"));
         //prendo la data attuale
@@ -925,7 +988,7 @@ public class LoginView extends JFrame{
                 if(c instanceof JLabel){
                     JLabel l = (JLabel) c;
                     l.setFont(new Font("SansSerif", Font.PLAIN, 20));
-                    p.setBorder(BorderFactory.createLineBorder(Color.black));
+                    p.setBorder(standardBorder);
                     l.setText(calendar.get(Calendar.DATE) + "");
                     int t = Integer.parseInt(l.getText());
                     l.setForeground(Color.black);
@@ -1017,7 +1080,7 @@ public class LoginView extends JFrame{
                                             currUUID = eventSelector.get(s);
                                             eventManager.deleteEventById(currUUID);
                                             calendarSetup();
-                                            initCalendarPanel(currUser, eventManager, currCal, year, month);
+                                            initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
                                             mainPanel.removeAll();
                                             mainPanel.add(calendarPanel);
                                             mainPanel.repaint();
@@ -1040,7 +1103,7 @@ public class LoginView extends JFrame{
      * inizializza la schermata di login al calendario
      */
     @SneakyThrows
-    public void initLoginCalendar(User u, PartecipaDB partecipaManager){
+    public void initLoginCalendar(User u, PartecipaDB partecipaManager, Border standardBorder){
         //makeHighlighted_HandCursor(creaCalendario);
         currentUser.setText(u.getUsername());
         //setPlaceHolder(tbCodice, "Inserire codice calendario");
@@ -1070,7 +1133,7 @@ public class LoginView extends JFrame{
                     calendarSetup();
                     //setto il calendario
                     EventDB eventManager = new EventDB();
-                    initCalendarPanel(currUser, eventManager, currCal, year, month);
+                    initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
                     mainPanel.removeAll();
                     mainPanel.add(calendarPanel);
                     mainPanel.repaint();
@@ -1130,5 +1193,18 @@ public class LoginView extends JFrame{
         LocalDate date = LocalDate.now();
         year = date.getYear();
         month = date.getMonthValue();
+    }
+
+    public static boolean isValidMail(String email)
+    {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+        return pat.matcher(email).matches();
     }
 }
