@@ -82,7 +82,7 @@ public class EventDB implements EventDAO{
     public void updateEvent(String nome, String date, User u, String type, String desc, String UUID) throws SQLException {
         String query = String.format("UPDATE event SET nome = '%s', data = '%s', iduser = '%s', type = '%s', event.desc = '%s' WHERE idevent = UUID_TO_BIN('%s')",
                 nome, date, u.getUsername(), type, desc, UUID);
-        System.out.println(query);
+        //System.out.println(query);
         statement.executeUpdate(query);
     }
 

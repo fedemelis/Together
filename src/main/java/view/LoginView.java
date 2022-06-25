@@ -21,12 +21,14 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.TextAttribute;
+import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
+import java.util.Timer;
 import java.util.regex.Pattern;
 
 public class LoginView extends JFrame{
@@ -160,6 +162,7 @@ public class LoginView extends JFrame{
     private HashMap<String, String> eventSelector = new HashMap();
     private boolean updating = false;
     private String currUUID;
+    List<Event> globalEventList;
 
     @SneakyThrows
     public LoginView()  {
@@ -237,8 +240,23 @@ public class LoginView extends JFrame{
         leftIcon = new ImageIcon(newimgLeft);
         indietro.setIcon(leftIcon);
 
-        //initFirebase();
+        Timer timer = new Timer();
+        TimerTask myTask = new TimerTask() {
+            @SneakyThrows
+            @Override
+            public void run() {
+                if((mainPanel.getComponents())[0] == calendarPanel){
+                    List<Event> refreshedList =  eventManager.selectAllEventOfSpecifiedMonth(currCal, month);
+                    if(refreshedList != globalEventList){
+                        initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
+                    }
+                }
+            }
+        };
 
+        timer.schedule(myTask, 2000, 2000);
+
+        //initFirebase();
 
         /**
          * porta alla creazione di un nuovo utente
@@ -546,7 +564,6 @@ public class LoginView extends JFrame{
                             if(p == null){
                                 partecipaManager.insertNewCalendarForSpecificUser(Integer.parseInt(tbCodice.getText()), currUser.getUsername());
                             }
-                            //TODO: se l'utente non ha mai fatto l'accesso a questo calendario, aggiungerlo alla lista
                             //costruisco il calendario
                             calendarSetup();
                             //setto il calendario
@@ -966,6 +983,7 @@ public class LoginView extends JFrame{
         List<Event> eventList;
         //prendo tutti gli eventi del mese
         eventList = eventManager.selectAllEventOfSpecifiedMonth(currentCalendar, month);
+        globalEventList = eventList;
         for(Event e : eventList){
             System.out.println(e.getIdEvent());
         }
@@ -1033,7 +1051,7 @@ public class LoginView extends JFrame{
                             else{
                                 String s = (String) ((JList) e.getSource()).getSelectedValue();
                                 if(s != null){
-                                    System.out.println(s);
+                                    //System.out.println(s);
                                     JPopupMenu menu = new JPopupMenu();
                                     JMenuItem update = new JMenuItem("Modifica");
                                     JMenuItem delete = new JMenuItem("Elimina");
@@ -1043,7 +1061,7 @@ public class LoginView extends JFrame{
                                     Rectangle bounds = ((JList<?>) e.getSource()).getCellBounds(index, index);
                                     Point p = bounds.getLocation();
                                     menu.show((Component) e.getSource(), p.x, p.y);
-                                    System.out.println(s);
+                                    //System.out.println(s);
                                     ((JList<?>) e.getSource()).clearSelection();
                                     b = true;
                                     /**
