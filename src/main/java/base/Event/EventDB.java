@@ -114,6 +114,13 @@ public class EventDB implements EventDAO{
         statement.executeUpdate(query);
     }
 
+    @Override
+    public List<String> selectUserameOfUsersFromEventAdded(Calendar cal) throws SQLException {
+        String query = String.format("select distinct iduser from event where idcalendar = %d", cal.getIdCalendar());
+        ResultSet rs = statement.executeQuery(query);
+        return rsToStringList(rs);
+    }
+
     public List<Event> rsToEventList(ResultSet rs) throws SQLException {
         List<Event> eventList = new ArrayList<Event>();
         HexFormat hex = HexFormat.of().withLowerCase();
@@ -129,6 +136,16 @@ public class EventDB implements EventDAO{
             eventList.add(e);
         }
         return eventList;
+    }
+
+    public List<String> rsToStringList(ResultSet rs) throws SQLException {
+        List<String> stringList = new ArrayList<String>();
+        while (rs.next()) {
+            String s = new String(
+                    rs.getString(1));
+            stringList.add(s);
+        }
+        return stringList;
     }
 
     public Event rsToEvent(ResultSet rs) throws SQLException {

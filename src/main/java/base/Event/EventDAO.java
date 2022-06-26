@@ -35,4 +35,6 @@ public interface EventDAO {
 
     void deleteEventById(String UUID) throws SQLException;
 
+    List<String> selectUserameOfUsersFromEventAdded(Calendar cal) throws SQLException;
+
 }

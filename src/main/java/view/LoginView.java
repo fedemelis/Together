@@ -150,6 +150,7 @@ public class LoginView extends JFrame{
     private JLabel labelCalendarDesc;
     private JLabel newEventError;
     private JButton backToUserLogin;
+    private JPanel leftCalendarBlock;
     private ArrayList<User> userList;
     private User currUser;
     //private Calendar calendar;
@@ -254,6 +255,8 @@ public class LoginView extends JFrame{
             }
         };
 
+        //leftCalendarBlock.add(new JCheckBox("prova", false));
+
         timer.schedule(myTask, 2000, 2000);
 
         //initFirebase();
@@ -305,6 +308,32 @@ public class LoginView extends JFrame{
             }
         });
 
+        indietro.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                indietro.setBackground(new Color(187, 187, 187));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                indietro.setBackground(new Color(240, 240, 240));
+            }
+        });
+
+        avanti.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                avanti.setBackground(new Color(187, 187, 187));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                avanti.setBackground(new Color(240, 240, 240));
+            }
+        });
+
 
 
                 /**
@@ -323,6 +352,7 @@ public class LoginView extends JFrame{
                                     errorLabel.setText("");
                                     tbPassword.setBorder(standardBorder);
                                     tbUser.setBorder(standardBorder);
+                                    //checkUserBox(currCal, eventManager);
                                     initLoginCalendar(currUser, partecipaManager, standardBorder);
                                     mainPanel.removeAll();
                                     mainPanel.add(loginCalendar);
@@ -566,6 +596,7 @@ public class LoginView extends JFrame{
                             }
                             //costruisco il calendario
                             calendarSetup();
+                            checkUserBox(currCal, eventManager);
                             //setto il calendario
                             initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
                             mainPanel.removeAll();
@@ -651,6 +682,7 @@ public class LoginView extends JFrame{
                         }
                         if (done == true) {
                             calendarSetup();
+                            checkUserBox(currCal, eventManager);
                             initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
                             mainPanel.removeAll();
                             mainPanel.add(calendarPanel);
@@ -682,6 +714,7 @@ public class LoginView extends JFrame{
                         }
                         if (done == true) {
                             calendarSetup();
+                            checkUserBox(currCal, eventManager);
                             initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
                             mainPanel.removeAll();
                             mainPanel.add(calendarPanel);
@@ -735,6 +768,7 @@ public class LoginView extends JFrame{
                 else{
                     month--;
                 }
+                checkUserBox(currCal, eventManager);
                 initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
             }
         });
@@ -751,6 +785,7 @@ public class LoginView extends JFrame{
                 else{
                     month++;
                 }
+                checkUserBox(currCal, eventManager);
                 initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
             }
         });
@@ -822,6 +857,7 @@ public class LoginView extends JFrame{
                                 partecipaManager.insertNewCalendarForSpecificUser(Integer.parseInt(newCalendarCode.getText()), currUser.getUsername());
                             }
                             initLoginCalendar(currUser, partecipaManager, standardBorder);
+                            checkUserBox(currCal, eventManager);
                             newCalendarCode.setText("");
                             newCalendarName.setText("");
                             newCalendarPass.setText("");
@@ -859,6 +895,8 @@ public class LoginView extends JFrame{
                 }
             }
         });
+
+
 
         goBackToUserLoginFromUserCreation.addActionListener(new ActionListener() {
             @Override
@@ -946,10 +984,24 @@ public class LoginView extends JFrame{
         });
     }
 
+
+
     @SneakyThrows
     public static void main(String[] args) {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         SwingUtilities.invokeLater(LoginView::new);
+    }
+
+    @SneakyThrows
+    public void checkUserBox(base.Calendar.Calendar currentCalendar, EventDB eventManager){
+        leftCalendarBlock.removeAll();
+        leftCalendarBlock.setLayout(new GridLayout(20, 1));
+        System.out.println("entrato");
+        List<String> stringList;
+        stringList = eventManager.selectUserameOfUsersFromEventAdded(currentCalendar);
+        for(String s : stringList){
+            leftCalendarBlock.add(new JCheckBox(s, true));
+        }
     }
 
     /**
@@ -1098,6 +1150,7 @@ public class LoginView extends JFrame{
                                             currUUID = eventSelector.get(s);
                                             eventManager.deleteEventById(currUUID);
                                             calendarSetup();
+                                            checkUserBox(currCal, eventManager);
                                             initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
                                             mainPanel.removeAll();
                                             mainPanel.add(calendarPanel);
@@ -1152,6 +1205,7 @@ public class LoginView extends JFrame{
                     //setto il calendario
                     EventDB eventManager = new EventDB();
                     initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
+                    checkUserBox(currCal, eventManager);
                     mainPanel.removeAll();
                     mainPanel.add(calendarPanel);
                     mainPanel.repaint();
