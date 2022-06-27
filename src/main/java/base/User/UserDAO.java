@@ -19,8 +19,10 @@ interface UserDAO {
     //change password by username
     void updatePasswordByUsername(String username, String newPassword);
 
+    void updateUserByUsername(User user) throws SQLException;
+
     //delete user by username
-    void deleteUserByUsername(String username);
+    void deleteUserByUsername(String username) throws SQLException;
 
     //insert new user
     void insertUser(String username, String password, String nome, String cognome, String mail) throws SQLException;

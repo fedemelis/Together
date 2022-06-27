@@ -51,6 +51,13 @@ public class UserDB implements UserDAO {
     }
 
     @Override
+    public void updateUserByUsername(User user) throws SQLException {
+        String query = String.format("UPDATE user SET nome = '%s', cognome = '%s', mail = '%s', password = '%s' WHERE username = '%s'",
+                user.getNome(), user.getCognome(), user.getMail(), user.getPassword(), user.getUsername());
+        statement.executeUpdate(query);
+    }
+
+    @Override
     public void deleteUserByUsername(String username) {
 
     }

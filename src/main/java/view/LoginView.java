@@ -21,7 +21,6 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.TextAttribute;
-import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -151,6 +150,20 @@ public class LoginView extends JFrame{
     private JLabel newEventError;
     private JButton backToUserLogin;
     private JPanel leftCalendarBlock;
+    private JButton btnProfilo;
+    private JLabel labelNomeUtente;
+    private JPanel userPanel;
+    private JTextField tbNomeUpdate;
+    private JTextField tbCognomeUpdate;
+    private JTextField tbEmailUpdate;
+    private JPasswordField tbPasswordUpdate;
+    private JPasswordField tbConfermaPasswordUpdate;
+    private JLabel labelNomeUtenteUsername;
+    private JButton btnAnnullaModifica;
+    private JButton btnConfermaModifica;
+    private JPanel topCalendarPanel;
+    private JLabel wrongPass;
+    private JPanel jpanelCell;
     private ArrayList<User> userList;
     private User currUser;
     //private Calendar calendar;
@@ -164,6 +177,7 @@ public class LoginView extends JFrame{
     private boolean updating = false;
     private String currUUID;
     List<Event> globalEventList;
+    Dimension dimension = jpanelCell.getSize();
 
     @SneakyThrows
     public LoginView()  {
@@ -188,6 +202,7 @@ public class LoginView extends JFrame{
         JDatePickerImpl dp = (JDatePickerImpl) DatePickerPanel.getComponent(0);
         dp.getModel().setDate(thisYear, thisMonth-1, thisDay);
         this.setExtendedState(MAXIMIZED_BOTH);
+
 
         Border standardBorder = tbUser.getBorder();
 
@@ -216,6 +231,7 @@ public class LoginView extends JFrame{
         showPass.setSize(20, 20);
         indietro.setSize(40, 40);
         avanti.setSize(40, 40);
+        btnProfilo.setSize(30, 30);
 
         ImageIcon eyeIcon = new ImageIcon("C:\\Users\\fedem\\IdeaProjects\\togetherUltimate\\src\\main\\java\\res\\visibility.png");
         Image img = eyeIcon.getImage() ;
@@ -241,21 +257,31 @@ public class LoginView extends JFrame{
         leftIcon = new ImageIcon(newimgLeft);
         indietro.setIcon(leftIcon);
 
+        ImageIcon userIcon = new ImageIcon("C:\\Users\\fedem\\IdeaProjects\\togetherUltimate\\src\\main\\java\\res\\edit.png");
+        Image imgUser = userIcon.getImage();
+        Image newImgUser = imgUser.getScaledInstance( btnProfilo.getWidth(), btnProfilo.getHeight(),  java.awt.Image.SCALE_SMOOTH );
+        userIcon = new ImageIcon(newImgUser);
+        btnProfilo.setIcon(userIcon);
+
+
+        ImageIcon logoIcon = new ImageIcon("C:\\Users\\fedem\\IdeaProjects\\togetherUltimate\\src\\main\\java\\res\\support.png");
+        Image imgIcon = logoIcon.getImage();
+        this.setIconImage(imgIcon);
+
         Timer timer = new Timer();
         TimerTask myTask = new TimerTask() {
             @SneakyThrows
             @Override
             public void run() {
                 if((mainPanel.getComponents())[0] == calendarPanel){
-                    List<Event> refreshedList =  eventManager.selectAllEventOfSpecifiedMonth(currCal, month);
-                    if(refreshedList != globalEventList){
+                    List<Event> refreshedList =  eventManager.selectAllEventOfCalendar(currCal);
+                    if(!refreshedList.equals(globalEventList)){
+                        System.out.println("attivata");
                         initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
                     }
                 }
             }
         };
-
-        //leftCalendarBlock.add(new JCheckBox("prova", false));
 
         timer.schedule(myTask, 2000, 2000);
 
@@ -331,6 +357,32 @@ public class LoginView extends JFrame{
             @Override
             public void mouseExited(MouseEvent e) {
                 avanti.setBackground(new Color(240, 240, 240));
+            }
+        });
+
+        btnProfilo.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnProfilo.setBackground(new Color(187, 187, 187));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnProfilo.setBackground(new Color(240, 240, 240));
+            }
+        });
+
+        addEvent.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                addEvent.setBackground(new Color(187, 187, 187));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                addEvent.setBackground(new Color(240, 240, 240));
             }
         });
 
@@ -593,10 +645,11 @@ public class LoginView extends JFrame{
                             System.out.println(p);
                             if(p == null){
                                 partecipaManager.insertNewCalendarForSpecificUser(Integer.parseInt(tbCodice.getText()), currUser.getUsername());
+                                initLoginCalendar(currUser, partecipaManager, standardBorder);
                             }
                             //costruisco il calendario
                             calendarSetup();
-                            checkUserBox(currCal, eventManager);
+                            checkUserBox(currCal, eventManager, standardBorder);
                             //setto il calendario
                             initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
                             mainPanel.removeAll();
@@ -627,6 +680,7 @@ public class LoginView extends JFrame{
          */
         addEvent.addActionListener(e -> {
             mainPanel.removeAll();
+            addEvent.setBackground(new Color(240, 240, 240));
             System.out.println(eventSelector);
             mainPanel.add(createEvent);
             mainPanel.repaint();
@@ -682,7 +736,7 @@ public class LoginView extends JFrame{
                         }
                         if (done == true) {
                             calendarSetup();
-                            checkUserBox(currCal, eventManager);
+                            checkUserBox(currCal, eventManager, standardBorder);
                             initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
                             mainPanel.removeAll();
                             mainPanel.add(calendarPanel);
@@ -714,7 +768,7 @@ public class LoginView extends JFrame{
                         }
                         if (done == true) {
                             calendarSetup();
-                            checkUserBox(currCal, eventManager);
+                            checkUserBox(currCal, eventManager, standardBorder);
                             initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
                             mainPanel.removeAll();
                             mainPanel.add(calendarPanel);
@@ -768,8 +822,17 @@ public class LoginView extends JFrame{
                 else{
                     month--;
                 }
-                checkUserBox(currCal, eventManager);
-                initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
+                //checkUserBox(currCal, eventManager, standardBorder);
+                String s = filterEventByUser();
+                if(s != ""){
+                    List<Event> list = eventManager.selectEventFiltered(s, currCal);
+                    initCalendarPanelFiltered(currUser, eventManager, currCal, year, month, standardBorder, list);
+                }
+                else{
+                    List<Event> listNull = new ArrayList<>();
+                    initCalendarPanelFiltered(currUser, eventManager, currCal, year, month, standardBorder,  listNull);
+                }
+                //initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
             }
         });
 
@@ -785,8 +848,17 @@ public class LoginView extends JFrame{
                 else{
                     month++;
                 }
-                checkUserBox(currCal, eventManager);
-                initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
+                //checkUserBox(currCal, eventManager, standardBorder);
+                String s = filterEventByUser();
+                if(s != ""){
+                    List<Event> list = eventManager.selectEventFiltered(s, currCal);
+                    initCalendarPanelFiltered(currUser, eventManager, currCal, year, month, standardBorder, list);
+                }
+                else{
+                    List<Event> listNull = new ArrayList<>();
+                    initCalendarPanelFiltered(currUser, eventManager, currCal, year, month, standardBorder,  listNull);
+                }
+                //initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
             }
         });
 
@@ -857,7 +929,7 @@ public class LoginView extends JFrame{
                                 partecipaManager.insertNewCalendarForSpecificUser(Integer.parseInt(newCalendarCode.getText()), currUser.getUsername());
                             }
                             initLoginCalendar(currUser, partecipaManager, standardBorder);
-                            checkUserBox(currCal, eventManager);
+                            //checkUserBox(currCal, eventManager);
                             newCalendarCode.setText("");
                             newCalendarName.setText("");
                             newCalendarPass.setText("");
@@ -938,10 +1010,163 @@ public class LoginView extends JFrame{
         backToUserLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //oldCalendar.getSelectedValue()
                 mainPanel.removeAll();
                 mainPanel.add(loginPanel);
                 mainPanel.repaint();
                 mainPanel.revalidate();
+            }
+        });
+
+        btnProfilo.addActionListener(new ActionListener() {
+            @SneakyThrows
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                btnProfilo.setBackground(new Color(240, 240, 240));
+                JLabel label = (JLabel) topCalendarPanel.getComponent(1);
+                String nomeUser = label.getText();
+                User userToModify = userManager.selectUserByUsername(nomeUser);
+
+                labelNomeUtenteUsername.setText(userToModify.getUsername());
+                tbNomeUpdate.setText(userToModify.getNome());
+                tbCognomeUpdate.setText(userToModify.getCognome());
+                tbEmailUpdate.setText(userToModify.getMail());
+                tbPasswordUpdate.setText(userToModify.getPassword());
+                tbConfermaPasswordUpdate.setText(userToModify.getPassword());
+
+                mainPanel.removeAll();
+                mainPanel.add(userPanel);
+                mainPanel.repaint();
+                mainPanel.revalidate();
+            }
+        });
+        btnAnnullaModifica.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mainPanel.removeAll();
+                mainPanel.add(calendarPanel);
+                mainPanel.repaint();
+                mainPanel.revalidate();
+            }
+        });
+
+        tbConfermaPasswordUpdate.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(!tbPasswordUpdate.getText().equals(tbConfermaPasswordUpdate.getText())){
+                    wrongPass.setText("La password non coincide");
+                    wrongPass.setForeground(Color.red);
+                    System.out.println("NO");
+
+                }
+                else{
+                    wrongPass.setText("");
+                    System.out.println("SI");
+                }
+            }
+        });
+
+        btnConfermaModifica.addActionListener(new ActionListener() {
+            @SneakyThrows
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!tbNomeUpdate.getText().isEmpty() && !tbCognomeUpdate.getText().isEmpty() && !tbEmailUpdate.getText().isEmpty() && !tbPasswordUpdate.getText().isEmpty() && !tbConfermaPasswordUpdate.getText().isEmpty()) {
+                    if(!tbNomeUpdate.getText().isEmpty()){
+                        tbNomeUpdate.setBorder(standardBorder);
+                    }
+                    if(!tbCognomeUpdate.getText().isEmpty()){
+                        tbCognomeUpdate.setBorder(standardBorder);
+                    }
+                    if(!tbEmailUpdate.getText().isEmpty()){
+                        tbEmailUpdate.setBorder(standardBorder);
+                    }
+                    if(!tbPasswordUpdate.getText().isEmpty()){
+                        tbPasswordUpdate.setBorder(standardBorder);
+                    }
+                    if(!tbConfermaPasswordUpdate.getText().isEmpty()){
+                        tbConfermaPasswordUpdate.setBorder(standardBorder);
+                    }
+                    if (tbPasswordUpdate.getText().equals(tbConfermaPasswordUpdate.getText())) {
+                        if(!isValidMail(tbEmailUpdate.getText())){
+                            wrongPass.setText("Mail non valida");
+                            wrongPass.setForeground(Color.red);
+                            tbEmailUpdate.setBorder(BorderFactory.createLineBorder(Color.red));
+                        }
+                        else{
+                            /////
+                            if(tbPasswordUpdate.getText().equals(tbConfermaPasswordUpdate.getText())){
+                                User userModified = new User(
+                                        labelNomeUtenteUsername.getText(),
+                                        tbPasswordUpdate.getText(),
+                                        tbNomeUpdate.getText(),
+                                        tbCognomeUpdate.getText(),
+                                        tbEmailUpdate.getText()
+                                );
+                                userManager.updateUserByUsername(userModified);
+                                currUser = userModified;
+                                mainPanel.removeAll();
+                                mainPanel.add(calendarPanel);
+                                mainPanel.repaint();
+                                mainPanel.revalidate();
+                            }
+                            ///////
+                        }
+                    }
+                }
+                else{
+                    if(tbNomeUpdate.getText().isEmpty()){
+                        tbNomeUpdate.setBorder(BorderFactory.createLineBorder(Color.red));
+                    }
+                    if(tbCognomeUpdate.getText().isEmpty()){
+                        tbCognomeUpdate.setBorder(BorderFactory.createLineBorder(Color.red));
+                    }
+                    if(tbEmailUpdate.getText().isEmpty()){
+                        tbEmailUpdate.setBorder(BorderFactory.createLineBorder(Color.red));
+                    }
+                    if(tbPasswordUpdate.getText().isEmpty()){
+                        tbPasswordUpdate.setBorder(BorderFactory.createLineBorder(Color.red));
+                    }
+                    if(tbConfermaPasswordUpdate.getText().isEmpty()){
+                        tbConfermaPasswordUpdate.setBorder(BorderFactory.createLineBorder(Color.red));
+                    }
+                }
+                ////////////////////////////////////////////////////////////////////////
+            }
+        });
+
+        tbNomeUpdate.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                tbNomeUpdate.setBorder(standardBorder);
+            }
+        });
+        tbCognomeUpdate.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                tbCognomeUpdate.setBorder(standardBorder);
+            }
+        });
+        tbEmailUpdate.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                tbEmailUpdate.setBorder(standardBorder);
+            }
+        });
+        tbPasswordUpdate.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                tbPasswordUpdate.setBorder(standardBorder);
+            }
+        });
+        tbConfermaPasswordUpdate.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                tbConfermaPasswordUpdate.setBorder(standardBorder);
             }
         });
     }
@@ -993,7 +1218,7 @@ public class LoginView extends JFrame{
     }
 
     @SneakyThrows
-    public void checkUserBox(base.Calendar.Calendar currentCalendar, EventDB eventManager){
+    public void checkUserBox(base.Calendar.Calendar currentCalendar, EventDB eventManager, Border standardBorder){
         leftCalendarBlock.removeAll();
         leftCalendarBlock.setLayout(new GridLayout(20, 1));
         System.out.println("entrato");
@@ -1001,6 +1226,24 @@ public class LoginView extends JFrame{
         stringList = eventManager.selectUserameOfUsersFromEventAdded(currentCalendar);
         for(String s : stringList){
             leftCalendarBlock.add(new JCheckBox(s, true));
+        }
+        for(Component c : leftCalendarBlock.getComponents()){
+            JCheckBox checkBox = (JCheckBox) c;
+            checkBox.addActionListener(new ActionListener() {
+                @SneakyThrows
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String s = filterEventByUser();
+                    if(s != ""){
+                        List<Event> list = eventManager.selectEventFiltered(s, currentCalendar);
+                        initCalendarPanelFiltered(currUser, eventManager, currCal, year, month, standardBorder, list);
+                    }
+                    else{
+                        List<Event> listNull = new ArrayList<>();
+                        initCalendarPanelFiltered(currUser, eventManager, currCal, year, month, standardBorder,  listNull);
+                    }
+                }
+            });
         }
     }
 
@@ -1011,6 +1254,7 @@ public class LoginView extends JFrame{
         /*lista per i valori da escludere nei for*/
         //List<String> dName = new ArrayList<>(Arrays.asList("Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"));
         //prendo la data attuale
+        labelNomeUtente.setText(currUser.getUsername());
         Calendar calendar = Calendar.getInstance();
         LocalDate date = LocalDate.now();
         int thisDay = date.getDayOfMonth();
@@ -1035,10 +1279,185 @@ public class LoginView extends JFrame{
         List<Event> eventList;
         //prendo tutti gli eventi del mese
         eventList = eventManager.selectAllEventOfSpecifiedMonth(currentCalendar, month);
-        globalEventList = eventList;
+        globalEventList = eventManager.selectAllEventOfCalendar(currentCalendar);
         for(Event e : eventList){
             System.out.println(e.getIdEvent());
         }
+        for (Component com : calendarPanel.getComponents()) {
+            JPanel p = (JPanel) com;
+            Dimension d = new Dimension(150, 70);
+            if(p.getComponentCount() == 2){
+                if(!(p.getComponent(0) instanceof JCheckBox)){
+                    p.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+                                mainPanel.removeAll();
+                                p.setBackground(new Color(240, 240, 240));
+                                //JDatePickerImpl dp = (JDatePickerImpl) DatePickerPanel.getComponent(0);
+                                mainPanel.add(createEvent);
+                                mainPanel.repaint();
+                                mainPanel.revalidate();
+                            }
+                        }
+
+                        @Override
+                        public void mouseEntered(MouseEvent e) {
+                            p.setBackground(new Color(187, 187, 187));
+                        }
+
+                        @Override
+                        public void mouseExited(MouseEvent e) {
+                            p.setBackground(new Color(240, 240, 240));
+                        }
+                    });
+                    /***
+                     * jlabel
+                     */
+                    Component c = p.getComponent(0);
+                    if(c instanceof JLabel){
+                        JLabel l = (JLabel) c;
+                        l.setFont(new Font("SansSerif", Font.PLAIN, 20));
+                        p.setBorder(standardBorder);
+                        l.setText(calendar.get(Calendar.DATE) + "");
+                        int t = Integer.parseInt(l.getText());
+                        l.setForeground(Color.black);
+                        if(calendar.get(Calendar.DAY_OF_WEEK) == 1){
+                            l.setForeground(Color.red);
+                        }
+                        if(thisDay == t && thisMonth == month && thisYear == year){
+                            day = thisDay;
+                            l.setForeground(Color.blue);
+                        }
+                    }
+
+                    /**
+                     * seleziono le jlist
+                     */
+                    c = p.getComponent(1);
+                    if(c instanceof JList<?>){
+                        JList list = (JList) c;
+                        DefaultListModel model = new DefaultListModel();
+                        for(Event e : eventList){
+                            String calendarDate = new SimpleDateFormat("yyyy-MM-dd 00:00:00").format(calendar.getTime());
+                            if(e.getDate().equals(calendarDate)){
+                                calendarDate = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
+                                model.addElement(e.getNome()+ " " + calendarDate);
+                                eventSelector.put(e.getNome()+ " " + calendarDate, e.getIdEvent());
+                            }
+                        }
+                        //attacco la lista di stringhe alla jlist
+                        list.setModel(model);
+                        /**
+                         * recepisce il click sul singolo oggetto della lista di eventi
+                         */
+                        list.addListSelectionListener(new ListSelectionListener() {
+                            boolean b = false;
+                            @Override
+                            public void valueChanged(ListSelectionEvent e) {
+                                if(b == true){
+                                    String s = (String) ((JList) e.getSource()).getSelectedValue();
+                                    if(s != null){
+                                        b = false;
+                                    }
+                                    b = false;
+                                }
+                                else{
+                                    String s = (String) ((JList) e.getSource()).getSelectedValue();
+                                    if(s != null){
+                                        //System.out.println(s);
+                                        JPopupMenu menu = new JPopupMenu();
+                                        JMenuItem update = new JMenuItem("Modifica");
+                                        JMenuItem delete = new JMenuItem("Elimina");
+                                        menu.add(update);
+                                        menu.add(delete);
+                                        int index = ((JList<?>) e.getSource()).getSelectedIndex();
+                                        Rectangle bounds = ((JList<?>) e.getSource()).getCellBounds(index, index);
+                                        Point p = bounds.getLocation();
+                                        menu.show((Component) e.getSource(), p.x, p.y);
+                                        //System.out.println(s);
+                                        ((JList<?>) e.getSource()).clearSelection();
+                                        b = true;
+                                        /**
+                                         * listener update
+                                         * */
+                                        update.addActionListener(new ActionListener() {
+                                            @SneakyThrows
+                                            @Override
+                                            public void actionPerformed(ActionEvent e) {
+                                                updating = true;
+                                                Event eventToModify = eventManager.selectEventByUUDI(eventSelector.get(s));
+                                                eventName.setText(eventToModify.getNome());
+                                                if(eventToModify.getType() != null){
+                                                    eventType.setText(eventToModify.getType());
+                                                }
+                                                if(eventToModify.getDesc() != null){
+                                                    eventDesc.setText(eventToModify.getDesc());
+                                                }
+                                                currUUID = eventSelector.get(s);
+                                                mainPanel.removeAll();
+                                                mainPanel.add(createEvent);
+                                                mainPanel.revalidate();
+                                                mainPanel.repaint();
+                                            }
+                                        });
+
+                                        /***
+                                         * listener delete
+                                         */
+                                        delete.addActionListener(new ActionListener() {
+                                            @SneakyThrows
+                                            @Override
+                                            public void actionPerformed(ActionEvent e) {
+                                                currUUID = eventSelector.get(s);
+                                                eventManager.deleteEventById(currUUID);
+                                                calendarSetup();
+                                                checkUserBox(currCal, eventManager, standardBorder);
+                                                initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
+                                                mainPanel.removeAll();
+                                                mainPanel.add(calendarPanel);
+                                                mainPanel.repaint();
+                                                mainPanel.revalidate();
+                                            }
+                                        });
+                                    }
+                                    b = true;
+                                }
+                            }
+                        });
+                    }
+                    //mando avanti il calendario per la scrittura
+                    calendar.add(Calendar.DATE, 1);
+                }
+            }
+        }
+    }
+
+    public void initCalendarPanelFiltered(User currUser, EventDB eventManager, base.Calendar.Calendar currentCalendar, int year, int month, Border standardBorder, List<Event> listEventFiltered) throws SQLException {
+        /*lista per i valori da escludere nei for*/
+        //List<String> dName = new ArrayList<>(Arrays.asList("Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"));
+        //prendo la data attuale
+        Calendar calendar = Calendar.getInstance();
+        LocalDate date = LocalDate.now();
+        int thisDay = date.getDayOfMonth();
+        int thisMonth = date.getMonthValue();
+        int thisYear = date.getYear();
+        //prendo anno e mese corrente
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month - 1);
+        calendar.set(Calendar.DATE, 1);
+        SimpleDateFormat df = new SimpleDateFormat("MMMM yyyy");
+        yearShow.setText(df.format(calendar.getTime()).toUpperCase(Locale.ROOT));
+        int startDay = calendar.get(Calendar.DAY_OF_WEEK);
+        if(startDay == 1){
+            startDay = 6;
+        }
+        else{
+            startDay -= 2;
+        }
+        System.out.println(calendar.get(Calendar.DAY_OF_WEEK));
+        calendar.add(Calendar.DATE, -startDay);
+        //prendo tutti gli eventi del mese
         for (Component com : calendarPanel.getComponents()) {
             JPanel p = (JPanel) com;
             if(p.getComponentCount() == 2){
@@ -1062,6 +1481,9 @@ public class LoginView extends JFrame{
                     l.setText(calendar.get(Calendar.DATE) + "");
                     int t = Integer.parseInt(l.getText());
                     l.setForeground(Color.black);
+                    if(calendar.get(Calendar.DAY_OF_WEEK) == 1){
+                        l.setForeground(Color.red);
+                    }
                     if(thisDay == t && thisMonth == month && thisYear == year){
                         day = thisDay;
                         l.setForeground(Color.blue);
@@ -1075,17 +1497,16 @@ public class LoginView extends JFrame{
                 if(c instanceof JList<?>){
                     JList list = (JList) c;
                     DefaultListModel model = new DefaultListModel();
-                    for(Event e : eventList){
+                    for(Event e : listEventFiltered){
                         String calendarDate = new SimpleDateFormat("yyyy-MM-dd 00:00:00").format(calendar.getTime());
                         if(e.getDate().equals(calendarDate)){
                             calendarDate = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
                             model.addElement(e.getNome()+ " " + calendarDate);
-                            eventSelector.put(e.getNome()+ " " + calendarDate, e.getIdEvent());
+                            //eventSelector.put(e.getNome()+ " " + calendarDate, e.getIdEvent());
                         }
                     }
-                    //attacco la lista di strinhe alla jlist
+                    //attacco la lista di stringhe alla jlist
                     list.setModel(model);
-
                     /**
                      * recepisce il click sul singolo oggetto della lista di eventi
                      */
@@ -1150,7 +1571,7 @@ public class LoginView extends JFrame{
                                             currUUID = eventSelector.get(s);
                                             eventManager.deleteEventById(currUUID);
                                             calendarSetup();
-                                            checkUserBox(currCal, eventManager);
+                                            checkUserBox(currCal, eventManager, standardBorder);
                                             initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
                                             mainPanel.removeAll();
                                             mainPanel.add(calendarPanel);
@@ -1193,24 +1614,26 @@ public class LoginView extends JFrame{
             public void valueChanged(ListSelectionEvent e) {
                 if (!first) {
                     String s = (String) ((JList) e.getSource()).getSelectedValue();
-                    String res = s.substring(s.indexOf("(")+1,s.indexOf(")"));
-                    int i = Integer.valueOf(res);
-                    System.out.println(i);
-                    first = true;
-                    CalendarDB calendarManager = new CalendarDB();
-                    currCal = calendarManager.selectCalendarByID(i);
-                    System.out.println("Accesso al calendario");
-                    //costruisco il calendario
-                    calendarSetup();
-                    //setto il calendario
-                    EventDB eventManager = new EventDB();
-                    initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
-                    checkUserBox(currCal, eventManager);
-                    mainPanel.removeAll();
-                    mainPanel.add(calendarPanel);
-                    mainPanel.repaint();
-                    mainPanel.revalidate();
-                    //((JList) e.getSource()).clearSelection();
+                    if(s != null){
+                        String res = s.substring(s.indexOf("(")+1,s.indexOf(")"));
+                        int i = Integer.valueOf(res);
+                        System.out.println(i);
+                        first = true;
+                        CalendarDB calendarManager = new CalendarDB();
+                        currCal = calendarManager.selectCalendarByID(i);
+                        System.out.println("Accesso al calendario");
+                        //costruisco il calendario
+                        calendarSetup();
+                        //setto il calendario
+                        EventDB eventManager = new EventDB();
+                        initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
+                        checkUserBox(currCal, eventManager, standardBorder);
+                        mainPanel.removeAll();
+                        mainPanel.add(calendarPanel);
+                        mainPanel.repaint();
+                        mainPanel.revalidate();
+                        ((JList) e.getSource()).clearSelection();
+                    }
                 }
                 else {
                     first = false;
@@ -1267,6 +1690,11 @@ public class LoginView extends JFrame{
         month = date.getMonthValue();
     }
 
+    /**
+     *
+     * @param email email candidata
+     * @return true - false
+     */
     public static boolean isValidMail(String email)
     {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
@@ -1278,5 +1706,20 @@ public class LoginView extends JFrame{
         if (email == null)
             return false;
         return pat.matcher(email).matches();
+    }
+
+    public String filterEventByUser(){
+        String query = "";
+        for(Component c : leftCalendarBlock.getComponents()){
+            JCheckBox checkBox = (JCheckBox) c;
+            if(checkBox.isSelected()){
+                String user = String.format("'%s',", checkBox.getText());
+                query += user;
+            }
+        }
+        if(query != ""){
+            return query.substring(0, query.length() - 1);
+        }
+        return query;
     }
 }

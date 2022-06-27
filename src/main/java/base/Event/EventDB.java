@@ -121,6 +121,13 @@ public class EventDB implements EventDAO{
         return rsToStringList(rs);
     }
 
+    @Override
+    public List<Event> selectEventFiltered(String gruop, Calendar cal) throws SQLException {
+        String query = String.format("select * from event where idcalendar = %d and iduser in (%s)", cal.getIdCalendar(), gruop);
+        ResultSet rs = statement.executeQuery(query);
+        return rsToEventList(rs);
+    }
+
     public List<Event> rsToEventList(ResultSet rs) throws SQLException {
         List<Event> eventList = new ArrayList<Event>();
         HexFormat hex = HexFormat.of().withLowerCase();

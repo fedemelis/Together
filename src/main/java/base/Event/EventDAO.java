@@ -37,4 +37,6 @@ public interface EventDAO {
 
     List<String> selectUserameOfUsersFromEventAdded(Calendar cal) throws SQLException;
 
+    List<Event> selectEventFiltered(String gruop, Calendar cal) throws SQLException;
+
 }
