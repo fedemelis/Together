@@ -7,6 +7,9 @@ import base.Partecipa.Partecipa;
 import base.Partecipa.PartecipaDB;
 import base.User.User;
 import base.User.UserDB;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import lombok.SneakyThrows;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -164,6 +167,7 @@ public class LoginView extends JFrame{
     private JPanel topCalendarPanel;
     private JLabel wrongPass;
     private JPanel jpanelCell;
+    private JLabel doUserHaveCalendar;
     private ArrayList<User> userList;
     private User currUser;
     //private Calendar calendar;
@@ -202,6 +206,7 @@ public class LoginView extends JFrame{
         JDatePickerImpl dp = (JDatePickerImpl) DatePickerPanel.getComponent(0);
         dp.getModel().setDate(thisYear, thisMonth-1, thisDay);
         this.setExtendedState(MAXIMIZED_BOTH);
+
 
 
         Border standardBorder = tbUser.getBorder();
@@ -1047,6 +1052,7 @@ public class LoginView extends JFrame{
                 mainPanel.add(calendarPanel);
                 mainPanel.repaint();
                 mainPanel.revalidate();
+                wrongPass.setText("");
             }
         });
 
@@ -1054,6 +1060,22 @@ public class LoginView extends JFrame{
             @Override
             public void keyReleased(KeyEvent e) {
                 if(!tbPasswordUpdate.getText().equals(tbConfermaPasswordUpdate.getText())){
+                    wrongPass.setText("La password non coincide");
+                    wrongPass.setForeground(Color.red);
+                    System.out.println("NO");
+
+                }
+                else{
+                    wrongPass.setText("");
+                    System.out.println("SI");
+                }
+            }
+        });
+
+        tbPasswordUpdate.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(!tbConfermaPasswordUpdate.getText().equals(tbPasswordUpdate.getText())){
                     wrongPass.setText("La password non coincide");
                     wrongPass.setForeground(Color.red);
                     System.out.println("NO");
@@ -1224,6 +1246,10 @@ public class LoginView extends JFrame{
         System.out.println("entrato");
         List<String> stringList;
         stringList = eventManager.selectUserameOfUsersFromEventAdded(currentCalendar);
+        /*if(!stringList.isEmpty()){
+            System.out.println("scrivo utenti");
+            doUserHaveCalendar.setText("Utenti:");
+        }*/
         for(String s : stringList){
             leftCalendarBlock.add(new JCheckBox(s, true));
         }
@@ -1633,6 +1659,8 @@ public class LoginView extends JFrame{
                         mainPanel.repaint();
                         mainPanel.revalidate();
                         ((JList) e.getSource()).clearSelection();
+                        tbCodice.setText("");
+                        tbCalendarPassword.setText("");
                     }
                 }
                 else {

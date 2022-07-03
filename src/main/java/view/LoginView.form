@@ -284,7 +284,7 @@
           </component>
           <component id="f3dda" class="javax.swing.JButton" binding="goBackToUserLoginFromUserCreation">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Indietro"/>
@@ -1834,14 +1834,6 @@
               <text value="Password"/>
             </properties>
           </component>
-          <component id="51858" class="javax.swing.JButton" binding="btgGoToCalendar">
-            <constraints>
-              <grid row="5" column="3" row-span="3" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Entra"/>
-            </properties>
-          </component>
           <hspacer id="cc7c2">
             <constraints>
               <grid row="6" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -1857,9 +1849,14 @@
           </component>
           <component id="1862a" class="javax.swing.JButton" binding="backToUserLogin">
             <constraints>
-              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                <minimum-size width="60" height="30"/>
+                <preferred-size width="60" height="30"/>
+                <maximum-size width="60" height="30"/>
+              </grid>
             </constraints>
             <properties>
+              <margin top="0" left="0" bottom="0" right="0"/>
               <text value="Logout"/>
             </properties>
           </component>
@@ -1882,6 +1879,14 @@
             </constraints>
             <properties>
               <text value="dddddddd"/>
+            </properties>
+          </component>
+          <component id="51858" class="javax.swing.JButton" binding="btgGoToCalendar">
+            <constraints>
+              <grid row="6" column="3" row-span="3" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Entra"/>
             </properties>
           </component>
         </children>
