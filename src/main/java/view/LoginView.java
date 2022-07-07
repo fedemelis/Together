@@ -10,6 +10,7 @@ import base.User.UserDB;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
+import com.mysql.cj.x.protobuf.MysqlxExpr;
 import lombok.SneakyThrows;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -167,6 +168,8 @@ public class LoginView extends JFrame{
     private JPanel topCalendarPanel;
     private JLabel wrongPass;
     private JPanel jpanelCell;
+    private JLabel labelFilter;
+    private JPanel topLeft;
     private JLabel doUserHaveCalendar;
     private ArrayList<User> userList;
     private User currUser;
@@ -634,6 +637,22 @@ public class LoginView extends JFrame{
             }
         });
 
+        tbNewAccountPassword.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(!tbConfirmPasword.getText().equals(tbNewAccountPassword.getText())){
+                    passErrLabel.setText("La password non coincide");
+                    passErrLabel.setForeground(Color.red);
+                    System.out.println("NO");
+
+                }
+                else{
+                    passErrLabel.setText("");
+                    System.out.println("SI");
+                }
+            }
+        });
+
         /**
          * fa il login al calendario
          */
@@ -697,6 +716,7 @@ public class LoginView extends JFrame{
         btnCancellaNuovoEvento.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                updating = false;
                 eventName.setText("");
                 eventType.setText("");
                 eventDesc.setText("");
@@ -1246,10 +1266,10 @@ public class LoginView extends JFrame{
         System.out.println("entrato");
         List<String> stringList;
         stringList = eventManager.selectUserameOfUsersFromEventAdded(currentCalendar);
-        /*if(!stringList.isEmpty()){
+        if(!stringList.isEmpty()){
             System.out.println("scrivo utenti");
-            doUserHaveCalendar.setText("Utenti:");
-        }*/
+            labelFilter.setText("Utenti:");
+        }
         for(String s : stringList){
             leftCalendarBlock.add(new JCheckBox(s, true));
         }
@@ -1309,151 +1329,196 @@ public class LoginView extends JFrame{
         for(Event e : eventList){
             System.out.println(e.getIdEvent());
         }
+        int currentMonthDay = 1;
         for (Component com : calendarPanel.getComponents()) {
-            JPanel p = (JPanel) com;
-            Dimension d = new Dimension(150, 70);
-            if(p.getComponentCount() == 2){
-                if(!(p.getComponent(0) instanceof JCheckBox)){
-                    p.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mouseClicked(MouseEvent e) {
-                            if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-                                mainPanel.removeAll();
-                                p.setBackground(new Color(240, 240, 240));
-                                //JDatePickerImpl dp = (JDatePickerImpl) DatePickerPanel.getComponent(0);
-                                mainPanel.add(createEvent);
-                                mainPanel.repaint();
-                                mainPanel.revalidate();
-                            }
-                        }
-
-                        @Override
-                        public void mouseEntered(MouseEvent e) {
-                            p.setBackground(new Color(187, 187, 187));
-                        }
-
-                        @Override
-                        public void mouseExited(MouseEvent e) {
-                            p.setBackground(new Color(240, 240, 240));
-                        }
-                    });
-                    /***
-                     * jlabel
-                     */
-                    Component c = p.getComponent(0);
-                    if(c instanceof JLabel){
-                        JLabel l = (JLabel) c;
-                        l.setFont(new Font("SansSerif", Font.PLAIN, 20));
-                        p.setBorder(standardBorder);
-                        l.setText(calendar.get(Calendar.DATE) + "");
-                        int t = Integer.parseInt(l.getText());
-                        l.setForeground(Color.black);
-                        if(calendar.get(Calendar.DAY_OF_WEEK) == 1){
-                            l.setForeground(Color.red);
-                        }
-                        if(thisDay == t && thisMonth == month && thisYear == year){
-                            day = thisDay;
-                            l.setForeground(Color.blue);
-                        }
-                    }
-
-                    /**
-                     * seleziono le jlist
-                     */
-                    c = p.getComponent(1);
-                    if(c instanceof JList<?>){
-                        JList list = (JList) c;
-                        DefaultListModel model = new DefaultListModel();
-                        for(Event e : eventList){
-                            String calendarDate = new SimpleDateFormat("yyyy-MM-dd 00:00:00").format(calendar.getTime());
-                            if(e.getDate().equals(calendarDate)){
-                                calendarDate = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
-                                model.addElement(e.getNome()+ " " + calendarDate);
-                                eventSelector.put(e.getNome()+ " " + calendarDate, e.getIdEvent());
-                            }
-                        }
-                        //attacco la lista di stringhe alla jlist
-                        list.setModel(model);
-                        /**
-                         * recepisce il click sul singolo oggetto della lista di eventi
-                         */
-                        list.addListSelectionListener(new ListSelectionListener() {
-                            boolean b = false;
+            if(com.getName() != "topLeft") {
+                JPanel p = (JPanel) com;
+                //Dimension d = new Dimension(150, 70);
+                if (p.getComponentCount() == 2) {
+                    if (!(p.getComponent(0) instanceof JCheckBox)) {
+                        /*p.addMouseListener(new MouseAdapter() {
+                            @SneakyThrows
                             @Override
-                            public void valueChanged(ListSelectionEvent e) {
-                                if(b == true){
-                                    String s = (String) ((JList) e.getSource()).getSelectedValue();
-                                    if(s != null){
-                                        b = false;
-                                    }
-                                    b = false;
-                                }
-                                else{
-                                    String s = (String) ((JList) e.getSource()).getSelectedValue();
-                                    if(s != null){
-                                        //System.out.println(s);
-                                        JPopupMenu menu = new JPopupMenu();
-                                        JMenuItem update = new JMenuItem("Modifica");
-                                        JMenuItem delete = new JMenuItem("Elimina");
-                                        menu.add(update);
-                                        menu.add(delete);
-                                        int index = ((JList<?>) e.getSource()).getSelectedIndex();
-                                        Rectangle bounds = ((JList<?>) e.getSource()).getCellBounds(index, index);
-                                        Point p = bounds.getLocation();
-                                        menu.show((Component) e.getSource(), p.x, p.y);
-                                        //System.out.println(s);
-                                        ((JList<?>) e.getSource()).clearSelection();
-                                        b = true;
-                                        /**
-                                         * listener update
-                                         * */
-                                        update.addActionListener(new ActionListener() {
-                                            @SneakyThrows
-                                            @Override
-                                            public void actionPerformed(ActionEvent e) {
-                                                updating = true;
-                                                Event eventToModify = eventManager.selectEventByUUDI(eventSelector.get(s));
-                                                eventName.setText(eventToModify.getNome());
-                                                if(eventToModify.getType() != null){
-                                                    eventType.setText(eventToModify.getType());
-                                                }
-                                                if(eventToModify.getDesc() != null){
-                                                    eventDesc.setText(eventToModify.getDesc());
-                                                }
-                                                currUUID = eventSelector.get(s);
-                                                mainPanel.removeAll();
-                                                mainPanel.add(createEvent);
-                                                mainPanel.revalidate();
-                                                mainPanel.repaint();
-                                            }
-                                        });
-
-                                        /***
-                                         * listener delete
-                                         */
-                                        delete.addActionListener(new ActionListener() {
-                                            @SneakyThrows
-                                            @Override
-                                            public void actionPerformed(ActionEvent e) {
-                                                currUUID = eventSelector.get(s);
-                                                eventManager.deleteEventById(currUUID);
-                                                calendarSetup();
-                                                checkUserBox(currCal, eventManager, standardBorder);
-                                                initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
-                                                mainPanel.removeAll();
-                                                mainPanel.add(calendarPanel);
-                                                mainPanel.repaint();
-                                                mainPanel.revalidate();
-                                            }
-                                        });
-                                    }
-                                    b = true;
+                            public void mouseClicked(MouseEvent e) {
+                                if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+                                    mainPanel.removeAll();
+                                    p.setBackground(new Color(240, 240, 240));
+                                    JPanel panel = (JPanel) ( e.getSource());
+                                    JLabel label = (JLabel) panel.getComponent(0);
+                                    String cDay = label.getText();
+                                    JDatePickerImpl dp = (JDatePickerImpl) DatePickerPanel.getComponent(0);
+                                    dp.getModel().setDate(year, month-1, Integer.parseInt(cDay));
+                                    dp.getModel().setSelected(true);
+                                    mainPanel.add(createEvent);
+                                    mainPanel.repaint();
+                                    mainPanel.revalidate();
                                 }
                             }
-                        });
+
+                            @Override
+                            public void mouseEntered(MouseEvent e) {
+                                p.setBackground(new Color(187, 187, 187));
+                            }
+
+                            @Override
+                            public void mouseExited(MouseEvent e) {
+                                p.setBackground(new Color(240, 240, 240));
+                            }
+                        });*/
+                        /***
+                         * jlabel
+                         */
+                        Component c = p.getComponent(0);
+                        if (c instanceof JLabel) {
+                            JLabel l = (JLabel) c;
+                            l.setFont(new Font("SansSerif", Font.PLAIN, 20));
+                            p.setBorder(standardBorder);
+                            l.setText(calendar.get(Calendar.DATE) + "");
+                            int t = Integer.parseInt(l.getText());
+                            l.setForeground(Color.black);
+                            if (calendar.get(Calendar.DAY_OF_WEEK) == 1) {
+                                l.setForeground(Color.red);
+                            }
+                            if (thisDay == t && thisMonth == month && thisYear == year) {
+                                day = thisDay;
+                                l.setForeground(Color.blue);
+                            }
+                            if(currentMonthDay == t){
+                                currentMonthDay+=1;
+                                p.addMouseListener(new MouseAdapter() {
+                                    @SneakyThrows
+                                    @Override
+                                    public void mouseClicked(MouseEvent e) {
+                                        if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+                                            mainPanel.removeAll();
+                                            p.setBackground(new Color(240, 240, 240));
+                                            JPanel panel = (JPanel) ( e.getSource());
+                                            JLabel label = (JLabel) panel.getComponent(0);
+                                            String cDay = label.getText();
+                                            JDatePickerImpl dp = (JDatePickerImpl) DatePickerPanel.getComponent(0);
+                                            dp.getModel().setDate(year, month-1, Integer.parseInt(cDay));
+                                            dp.getModel().setSelected(true);
+                                            mainPanel.add(createEvent);
+                                            mainPanel.repaint();
+                                            mainPanel.revalidate();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void mouseEntered(MouseEvent e) {
+                                        p.setBackground(new Color(187, 187, 187));
+                                    }
+
+                                    @Override
+                                    public void mouseExited(MouseEvent e) {
+                                        p.setBackground(new Color(240, 240, 240));
+                                    }
+                                });
+                            }
+                            else{
+                                //teletrasporto
+                                l.setForeground(Color.gray);
+                            }
+                        }
+
+                        /**
+                         * seleziono le jlist
+                         */
+                        c = p.getComponent(1);
+                        if (c instanceof JList<?>) {
+                            JList list = (JList) c;
+                            DefaultListModel model = new DefaultListModel();
+                            for (Event e : eventList) {
+                                String calendarDate = new SimpleDateFormat("yyyy-MM-dd 00:00:00").format(calendar.getTime());
+                                if (e.getDate().equals(calendarDate)) {
+                                    calendarDate = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
+                                    model.addElement(e.getNome() + " " + calendarDate);
+                                    eventSelector.put(e.getNome() + " " + calendarDate, e.getIdEvent());
+                                }
+                            }
+                            //attacco la lista di stringhe alla jlist
+                            list.setModel(model);
+                            /**
+                             * recepisce il click sul singolo oggetto della lista di eventi
+                             */
+                            list.addListSelectionListener(new ListSelectionListener() {
+                                boolean b = false;
+
+                                @Override
+                                public void valueChanged(ListSelectionEvent e) {
+                                    if (b == true) {
+                                        String s = (String) ((JList) e.getSource()).getSelectedValue();
+                                        if (s != null) {
+                                            b = false;
+                                        }
+                                        b = false;
+                                    } else {
+                                        String s = (String) ((JList) e.getSource()).getSelectedValue();
+                                        if (s != null) {
+                                            //System.out.println(s);
+                                            JPopupMenu menu = new JPopupMenu();
+                                            JMenuItem update = new JMenuItem("Modifica");
+                                            JMenuItem delete = new JMenuItem("Elimina");
+                                            menu.add(update);
+                                            menu.add(delete);
+                                            int index = ((JList<?>) e.getSource()).getSelectedIndex();
+                                            Rectangle bounds = ((JList<?>) e.getSource()).getCellBounds(index, index);
+                                            Point p = bounds.getLocation();
+                                            menu.show((Component) e.getSource(), p.x, p.y);
+                                            //System.out.println(s);
+                                            ((JList<?>) e.getSource()).clearSelection();
+                                            b = true;
+                                            /**
+                                             * listener update
+                                             * */
+                                            update.addActionListener(new ActionListener() {
+                                                @SneakyThrows
+                                                @Override
+                                                public void actionPerformed(ActionEvent e) {
+                                                    updating = true;
+                                                    Event eventToModify = eventManager.selectEventByUUDI(eventSelector.get(s));
+                                                    eventName.setText(eventToModify.getNome());
+                                                    if (eventToModify.getType() != null) {
+                                                        eventType.setText(eventToModify.getType());
+                                                    }
+                                                    if (eventToModify.getDesc() != null) {
+                                                        eventDesc.setText(eventToModify.getDesc());
+                                                    }
+                                                    currUUID = eventSelector.get(s);
+                                                    mainPanel.removeAll();
+                                                    mainPanel.add(createEvent);
+                                                    mainPanel.revalidate();
+                                                    mainPanel.repaint();
+                                                }
+                                            });
+
+                                            /***
+                                             * listener delete
+                                             */
+                                            delete.addActionListener(new ActionListener() {
+                                                @SneakyThrows
+                                                @Override
+                                                public void actionPerformed(ActionEvent e) {
+                                                    currUUID = eventSelector.get(s);
+                                                    eventManager.deleteEventById(currUUID);
+                                                    calendarSetup();
+                                                    checkUserBox(currCal, eventManager, standardBorder);
+                                                    initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
+                                                    mainPanel.removeAll();
+                                                    mainPanel.add(calendarPanel);
+                                                    mainPanel.repaint();
+                                                    mainPanel.revalidate();
+                                                }
+                                            });
+                                        }
+                                        b = true;
+                                    }
+                                }
+                            });
+                        }
+                        //mando avanti il calendario per la scrittura
+                        calendar.add(Calendar.DATE, 1);
                     }
-                    //mando avanti il calendario per la scrittura
-                    calendar.add(Calendar.DATE, 1);
                 }
             }
         }
@@ -1484,23 +1549,13 @@ public class LoginView extends JFrame{
         System.out.println(calendar.get(Calendar.DAY_OF_WEEK));
         calendar.add(Calendar.DATE, -startDay);
         //prendo tutti gli eventi del mese
+        int currentMonthDay = 1;
         for (Component com : calendarPanel.getComponents()) {
             JPanel p = (JPanel) com;
             if(p.getComponentCount() == 2){
-                p.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-                            mainPanel.removeAll();
-                            //JDatePickerImpl dp = (JDatePickerImpl) DatePickerPanel.getComponent(0);
-                            mainPanel.add(createEvent);
-                            mainPanel.repaint();
-                            mainPanel.revalidate();
-                        }
-                    }
-                });
                 Component c = p.getComponent(0);
                 if(c instanceof JLabel){
+                    //p.removeMouseListener();
                     JLabel l = (JLabel) c;
                     l.setFont(new Font("SansSerif", Font.PLAIN, 20));
                     p.setBorder(standardBorder);
@@ -1514,7 +1569,44 @@ public class LoginView extends JFrame{
                         day = thisDay;
                         l.setForeground(Color.blue);
                     }
+                    if(currentMonthDay == t){
+                        currentMonthDay+=1;
+                        p.addMouseListener(new MouseAdapter() {
+                            @SneakyThrows
+                            @Override
+                            public void mouseClicked(MouseEvent e) {
+                                if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+                                    mainPanel.removeAll();
+                                    p.setBackground(new Color(240, 240, 240));
+                                    JPanel panel = (JPanel) ( e.getSource());
+                                    JLabel label = (JLabel) panel.getComponent(0);
+                                    String cDay = label.getText();
+                                    JDatePickerImpl dp = (JDatePickerImpl) DatePickerPanel.getComponent(0);
+                                    dp.getModel().setDate(year, month-1, Integer.parseInt(cDay));
+                                    dp.getModel().setSelected(true);
+                                    mainPanel.add(createEvent);
+                                    mainPanel.repaint();
+                                    mainPanel.revalidate();
+                                }
+                            }
+
+                            @Override
+                            public void mouseEntered(MouseEvent e) {
+                                p.setBackground(new Color(187, 187, 187));
+                            }
+
+                            @Override
+                            public void mouseExited(MouseEvent e) {
+                                p.setBackground(new Color(240, 240, 240));
+                            }
+                        });
+                    }
+                    else{
+                        //teletrasporto
+                        l.setForeground(Color.gray);;
+                    }
                 }
+
 
                 /**
                  * seleziono le jlist
@@ -1528,7 +1620,7 @@ public class LoginView extends JFrame{
                         if(e.getDate().equals(calendarDate)){
                             calendarDate = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
                             model.addElement(e.getNome()+ " " + calendarDate);
-                            //eventSelector.put(e.getNome()+ " " + calendarDate, e.getIdEvent());
+                            eventSelector.put(e.getNome()+ " " + calendarDate, e.getIdEvent());
                         }
                     }
                     //attacco la lista di stringhe alla jlist
@@ -1538,18 +1630,18 @@ public class LoginView extends JFrame{
                      */
                     list.addListSelectionListener(new ListSelectionListener() {
                         boolean b = false;
+
                         @Override
                         public void valueChanged(ListSelectionEvent e) {
-                            if(b == true){
+                            if (b == true) {
                                 String s = (String) ((JList) e.getSource()).getSelectedValue();
-                                if(s != null){
+                                if (s != null) {
                                     b = false;
                                 }
                                 b = false;
-                            }
-                            else{
+                            } else {
                                 String s = (String) ((JList) e.getSource()).getSelectedValue();
-                                if(s != null){
+                                if (s != null) {
                                     //System.out.println(s);
                                     JPopupMenu menu = new JPopupMenu();
                                     JMenuItem update = new JMenuItem("Modifica");
@@ -1571,12 +1663,15 @@ public class LoginView extends JFrame{
                                         @Override
                                         public void actionPerformed(ActionEvent e) {
                                             updating = true;
+                                            System.out.println(s + "SONO LA STRINGA");
+                                            System.out.println(eventSelector.get(s) + "SONO L'UUID");
+                                            System.out.println(eventSelector);
                                             Event eventToModify = eventManager.selectEventByUUDI(eventSelector.get(s));
                                             eventName.setText(eventToModify.getNome());
-                                            if(eventToModify.getType() != null){
+                                            if (eventToModify.getType() != null) {
                                                 eventType.setText(eventToModify.getType());
                                             }
-                                            if(eventToModify.getDesc() != null){
+                                            if (eventToModify.getDesc() != null) {
                                                 eventDesc.setText(eventToModify.getDesc());
                                             }
                                             currUUID = eventSelector.get(s);
@@ -1701,6 +1796,8 @@ public class LoginView extends JFrame{
                 return "";
             }
         });
+        datePicker.getModel().setDate(year, month, day);
+        datePicker.getModel().setSelected(true);
         DatePickerPanel.add(datePicker);
         mainPanel.revalidate();
         mainPanel.repaint();
@@ -1751,3 +1848,4 @@ public class LoginView extends JFrame{
         return query;
     }
 }
+//todo login con il tasto INVIO, occhio barrato per le password
