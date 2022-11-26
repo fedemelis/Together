@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-interface UserDAO {
+public interface UserDAO {
 
     //return user by username
     User selectUserByUsername(String username) throws SQLException;

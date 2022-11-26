@@ -17,9 +17,6 @@ public class EventDB implements EventDAO{
     Statement statement;
 
     public void MySQLConnection() throws SQLException {
-        DBManager.setConnection(
-                DBManager.JDBC_Driver_MySQL,
-                DBManager.JDBC_URL_MySQL);
         statement = DBManager.getConnection().createStatement(
                 ResultSet.TYPE_SCROLL_SENSITIVE,
                 ResultSet.CONCUR_UPDATABLE);

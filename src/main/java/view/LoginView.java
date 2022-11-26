@@ -1,16 +1,16 @@
 package view;
 
+import base.Calendar.CalendarDAO;
 import base.Calendar.CalendarDB;
 import base.Event.Event;
+import base.Event.EventDAO;
 import base.Event.EventDB;
 import base.Partecipa.Partecipa;
+import base.Partecipa.PartecipaDAO;
 import base.Partecipa.PartecipaDB;
 import base.User.User;
+import base.User.UserDAO;
 import base.User.UserDB;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.gson.GsonFactory;
-import com.mysql.cj.x.protobuf.MysqlxExpr;
 import lombok.SneakyThrows;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -35,7 +35,7 @@ import java.util.Timer;
 import java.util.regex.Pattern;
 
 public class LoginView extends JFrame{
-    private JPanel mainPanel;
+    public JPanel mainPanel;
     private JPanel loginPanel;
     private JTextField tbUser;
     private JPasswordField tbPassword;
@@ -53,7 +53,7 @@ public class LoginView extends JFrame{
     private JPanel createNewAccountPanel;
     private JPasswordField tbNewAccountPassword;
     private JLabel passErrLabel;
-    private JPanel calendarPanel;
+    public JPanel calendarPanel;
     private JPanel lun;
     private JPanel mar;
     private JPanel mer;
@@ -172,24 +172,24 @@ public class LoginView extends JFrame{
     private JPanel topLeft;
     private JLabel doUserHaveCalendar;
     private ArrayList<User> userList;
-    private User currUser;
+    public User currUser;
     //private Calendar calendar;
-    private int year;
-    private int month;
-    private int day;
-    private base.Calendar.Calendar currCal;
+    public int year;
+    public int month;
+    public int day;
+    public base.Calendar.Calendar currCal;
     private boolean first = true;
     private boolean isShow = false;
     private HashMap<String, String> eventSelector = new HashMap();
     private boolean updating = false;
     private String currUUID;
-    List<Event> globalEventList;
-    Dimension dimension = jpanelCell.getSize();
+    public List<Event> globalEventList;
+
+
 
     @SneakyThrows
-    public LoginView()  {
+    public LoginView() {
         super("Together");
-
         setContentPane(mainPanel);
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
         // width will store the width of the screen
@@ -209,6 +209,7 @@ public class LoginView extends JFrame{
         JDatePickerImpl dp = (JDatePickerImpl) DatePickerPanel.getComponent(0);
         dp.getModel().setDate(thisYear, thisMonth-1, thisDay);
         this.setExtendedState(MAXIMIZED_BOTH);
+        loginPanel.requestFocusInWindow();
 
 
 
@@ -231,10 +232,10 @@ public class LoginView extends JFrame{
 
 
         //usato per le operazioni sul database
-        UserDB userManager = new UserDB();
-        CalendarDB calendarManager = new CalendarDB();
-        EventDB eventManager = new EventDB();
-        PartecipaDB partecipaManager = new PartecipaDB();
+        UserDAO userManager = new UserDB();
+        CalendarDAO calendarManager = new CalendarDB();
+        EventDAO eventManager = new EventDB();
+        PartecipaDAO partecipaManager = new PartecipaDB();
 
         showPass.setSize(20, 20);
         indietro.setSize(40, 40);
@@ -271,29 +272,20 @@ public class LoginView extends JFrame{
         userIcon = new ImageIcon(newImgUser);
         btnProfilo.setIcon(userIcon);
 
-
         ImageIcon logoIcon = new ImageIcon("C:\\Users\\fedem\\IdeaProjects\\togetherUltimate\\src\\main\\java\\res\\support.png");
         Image imgIcon = logoIcon.getImage();
         this.setIconImage(imgIcon);
 
         Timer timer = new Timer();
+        LiveUpdate liveUpdate = new LiveUpdate(this);
         TimerTask myTask = new TimerTask() {
             @SneakyThrows
             @Override
             public void run() {
-                if((mainPanel.getComponents())[0] == calendarPanel){
-                    List<Event> refreshedList =  eventManager.selectAllEventOfCalendar(currCal);
-                    if(!refreshedList.equals(globalEventList)){
-                        System.out.println("attivata");
-                        initCalendarPanel(currUser, eventManager, currCal, year, month, standardBorder);
-                    }
-                }
+                liveUpdate.update(eventManager, standardBorder);
             }
         };
-
         timer.schedule(myTask, 2000, 2000);
-
-        //initFirebase();
 
         /**
          * porta alla creazione di un nuovo utente
@@ -393,9 +385,7 @@ public class LoginView extends JFrame{
                 addEvent.setBackground(new Color(240, 240, 240));
             }
         });
-
-
-
+        //SwingUtilities.getRootPane(btnEntra).setDefaultButton(btnEntra);
                 /**
                  * esegue il login per un utente
                  */
@@ -430,8 +420,8 @@ public class LoginView extends JFrame{
                                         errorLabel.setText("Username o password errati");
                                     }
                                     errorLabel.setForeground(Color.red);
-                                    tbPassword.setBorder(BorderFactory.createLineBorder(Color.red));
                                     tbUser.setBorder(BorderFactory.createLineBorder(Color.red));
+                                    tbPassword.setBorder(BorderFactory.createLineBorder(Color.red));
 
                                 }
                             } else {
@@ -452,6 +442,7 @@ public class LoginView extends JFrame{
                         }
                     }
                 });
+
 
         tbUser.addKeyListener(new KeyAdapter() {
             @Override
@@ -1020,6 +1011,7 @@ public class LoginView extends JFrame{
                 tbNewAccountPassword.setBorder(standardBorder);
                 labelConfirmPassword.setForeground(Color.black);
                 tbConfirmPasword.setBorder(standardBorder);
+                //getRootPane().setDefaultButton(btnEntra);
             }
         });
 
@@ -1040,6 +1032,7 @@ public class LoginView extends JFrame{
                 mainPanel.add(loginPanel);
                 mainPanel.repaint();
                 mainPanel.revalidate();
+                //getRootPane().setDefaultButton(btnEntra);
             }
         });
 
@@ -1260,7 +1253,7 @@ public class LoginView extends JFrame{
     }
 
     @SneakyThrows
-    public void checkUserBox(base.Calendar.Calendar currentCalendar, EventDB eventManager, Border standardBorder){
+    public void checkUserBox(base.Calendar.Calendar currentCalendar, EventDAO eventManager, Border standardBorder){
         leftCalendarBlock.removeAll();
         leftCalendarBlock.setLayout(new GridLayout(20, 1));
         System.out.println("entrato");
@@ -1296,7 +1289,7 @@ public class LoginView extends JFrame{
     /**
      * inizializza il calendario
      */
-    public void initCalendarPanel(User currUser, EventDB eventManager, base.Calendar.Calendar currentCalendar, int year, int month, Border standardBorder) throws SQLException {
+    public void initCalendarPanel(User currUser, EventDAO eventManager, base.Calendar.Calendar currentCalendar, int year, int month, Border standardBorder) throws SQLException {
         /*lista per i valori da escludere nei for*/
         //List<String> dName = new ArrayList<>(Arrays.asList("Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"));
         //prendo la data attuale
@@ -1446,7 +1439,7 @@ public class LoginView extends JFrame{
 
                                 @Override
                                 public void valueChanged(ListSelectionEvent e) {
-                                    if (b == true) {
+                                    if (b) {
                                         String s = (String) ((JList) e.getSource()).getSelectedValue();
                                         if (s != null) {
                                             b = false;
@@ -1524,7 +1517,7 @@ public class LoginView extends JFrame{
         }
     }
 
-    public void initCalendarPanelFiltered(User currUser, EventDB eventManager, base.Calendar.Calendar currentCalendar, int year, int month, Border standardBorder, List<Event> listEventFiltered) throws SQLException {
+    public void initCalendarPanelFiltered(User currUser, EventDAO eventManager, base.Calendar.Calendar currentCalendar, int year, int month, Border standardBorder, List<Event> listEventFiltered) throws SQLException {
         /*lista per i valori da escludere nei for*/
         //List<String> dName = new ArrayList<>(Arrays.asList("Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"));
         //prendo la data attuale
@@ -1716,7 +1709,7 @@ public class LoginView extends JFrame{
      * inizializza la schermata di login al calendario
      */
     @SneakyThrows
-    public void initLoginCalendar(User u, PartecipaDB partecipaManager, Border standardBorder){
+    public void initLoginCalendar(User u, PartecipaDAO partecipaManager, Border standardBorder){
         //makeHighlighted_HandCursor(creaCalendario);
         currentUser.setText(u.getUsername());
         //setPlaceHolder(tbCodice, "Inserire codice calendario");
